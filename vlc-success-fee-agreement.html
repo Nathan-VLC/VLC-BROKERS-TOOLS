@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VLC — Fee Agreement</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f4f0; color: #1a1a2e; }
+  header { background: #1a1a2e; padding: 18px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #c9a84c; }
+  .logo { font-size: 1.1rem; font-weight: 700; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
+  .logo span { color: #c9a84c; }
+  .back-btn { color: #c9a84c; text-decoration: none; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+  .back-btn:hover { color: #fff; }
+  .page-hero { background: #1a1a2e; padding: 40px 40px 30px; }
+  .page-label { color: #c9a84c; font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+  .page-hero h1 { color: #fff; font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
+  .page-hero p { color: #a0a0b8; font-size: 0.95rem; }
+  .content { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+  .doc-card { background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); overflow: hidden; }
+  .doc-header { background: #1a1a2e; padding: 20px 32px; border-bottom: 2px solid #c9a84c; }
+  .doc-header h2 { color: #fff; font-size: 1.1rem; font-weight: 700; }
+  .doc-header p { color: #a0a0b8; font-size: 0.85rem; margin-top: 4px; }
+  .doc-body { padding: 40px; }
+  .doc-logo { font-size: 1.3rem; font-weight: 800; color: #1a1a2e; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .doc-logo span { color: #c9a84c; }
+  .doc-tagline { font-size: 0.8rem; color: #888; margin-bottom: 32px; }
+  .doc-title { font-size: 1.2rem; font-weight: 700; text-align: center; margin-bottom: 6px; color: #1a1a2e; }
+  .doc-subtitle { font-size: 0.85rem; text-align: center; color: #888; margin-bottom: 32px; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 16px; }
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 0.75rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .field input, .field select { width: 100%; border: none; border-bottom: 1.5px solid #ddd; padding: 8px 0; font-size: 0.95rem; font-family: inherit; color: #1a1a2e; background: transparent; }
+  .field input:focus, .field select:focus { outline: none; border-bottom-color: #c9a84c; }
+  .section-title { font-size: 0.72rem; font-weight: 700; color: #c9a84c; text-transform: uppercase; letter-spacing: 1.5px; margin: 28px 0 14px; }
+  .clause { margin-bottom: 14px; }
+  .clause p { font-size: 0.9rem; line-height: 1.75; color: #333; }
+  .fee-box { background: #1a1a2e; border-radius: 6px; padding: 20px 24px; margin: 20px 0; text-align: center; }
+  .fee-box p { color: #a0a0b8; font-size: 0.82rem; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+  .fee-box .fee-amount { color: #c9a84c; font-size: 1.8rem; font-weight: 800; }
+  .fee-box .fee-label { color: #fff; font-size: 0.9rem; margin-top: 4px; }
+  .sig-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 36px; }
+  .sig-block { border-top: 1.5px solid #1a1a2e; padding-top: 10px; }
+  .sig-block p { font-size: 0.8rem; color: #888; }
+  .sig-block .sig-name { font-size: 0.85rem; font-weight: 600; color: #1a1a2e; margin-top: 6px; }
+  .print-btn { background: #1a1a2e; color: #c9a84c; border: none; border-radius: 6px; padding: 12px 28px; font-size: 0.85rem; font-weight: 700; cursor: pointer; letter-spacing: 0.5px; text-transform: uppercase; margin-top: 24px; }
+  .print-btn:hover { background: #c9a84c; color: #1a1a2e; }
+  @media print { header, .page-hero, .print-btn, .doc-header { display: none; } .content { padding: 0; } body { background: #fff; } }
+  @media(max-width:600px){ .field-row{grid-template-columns:1fr;} .sig-grid{grid-template-columns:1fr;} header{padding:14px 20px;} .page-hero{padding:24px 20px;} .doc-body{padding:24px 20px;} }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Vital Link <span>Capital</span></div>
+  <a class="back-btn" href="index.html">← Back to Hub</a>
+</header>
+<div class="page-hero">
+  <div class="page-label">Client Documents</div>
+  <h1>Brokerage Fee Agreement</h1>
+  <p>For bank overdraft and facility products where a brokerage fee applies upon successful arrangement.</p>
+</div>
+<div class="content">
+  <div class="doc-card">
+    <div class="doc-header">
+      <h2>Brokerage Fee Agreement</h2>
+      <p>Complete all fields before printing for client signature</p>
+    </div>
+    <div class="doc-body">
+      <div class="doc-logo">Vital Link <span>Capital</span></div>
+      <div class="doc-tagline">Business Funding Brokerage · Nationwide</div>
+
+      <div class="doc-title">BROKERAGE FEE AGREEMENT</div>
+      <div class="doc-subtitle">Bank Facility and Long-Term Finance Products</div>
+
+      <div class="section-title">Client Details</div>
+      <div class="field-row">
+        <div class="field"><label>Business Name</label><input type="text" id="biz-name" placeholder="Registered business name" oninput="update('biz-name','disp-biz')"></div>
+        <div class="field"><label>Registration Number</label><input type="text" id="reg-num" placeholder="e.g. 2020/123456/07" oninput="update('reg-num','disp-reg')"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Authorised Signatory</label><input type="text" id="sig-name" placeholder="Full name of owner / director" oninput="update('sig-name','disp-sig');update('sig-name','disp-sig2')"></div>
+        <div class="field"><label>Identity Number</label><input type="text" id="id-num" placeholder="13-digit ID number"></div>
+      </div>
+
+      <div class="section-title">Facility Details</div>
+      <div class="field-row">
+        <div class="field"><label>Facility Type</label>
+          <select id="facility-type" onchange="update('facility-type','disp-type')">
+            <option value="Business Overdraft Facility">Business Overdraft Facility</option>
+            <option value="Medium-Term Business Loan">Medium-Term Business Loan</option>
+            <option value="Asset Finance Facility">Asset Finance Facility</option>
+            <option value="Commercial Property Finance">Commercial Property Finance</option>
+          </select>
+        </div>
+        <div class="field"><label>Facility Amount (R)</label><input type="text" id="fac-amount" placeholder="e.g. R500,000" oninput="update('fac-amount','disp-amount')"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Lender / Bank</label><input type="text" id="lender" placeholder="e.g. Nedbank, FNB" oninput="update('lender','disp-lender')"></div>
+        <div class="field"><label>Brokerage Fee (%)</label>
+          <select id="fee-pct" onchange="calcFee()">
+            <option value="1">1.0%</option>
+            <option value="1.5" selected>1.5%</option>
+            <option value="2">2.0%</option>
+            <option value="2.5">2.5%</option>
+            <option value="3">3.0%</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="fee-box">
+        <p>Brokerage Fee Payable Upon Successful Arrangement</p>
+        <div class="fee-amount" id="disp-fee">R 0.00</div>
+        <div class="fee-label" id="disp-fee-label">Enter facility amount above to calculate</div>
+      </div>
+
+      <div class="section-title">Agreement Terms</div>
+      <div class="clause">
+        <p>This agreement is entered into between <strong>Vital Link Capital (Pty) Ltd</strong> ("the Broker") and <strong><span id="disp-biz">_______________________</span></strong> (Registration No: <span id="disp-reg">_______________</span>) ("the Client").</p>
+      </div>
+      <div class="clause">
+        <p>The Client hereby agrees to pay the Broker a brokerage fee upon the successful arrangement of a <strong><span id="disp-type">Business Facility</span></strong> in the amount of <strong><span id="disp-amount">R_______________</span></strong> with <strong><span id="disp-lender">_______________</span></strong>.</p>
+      </div>
+      <div class="clause">
+        <p><strong>No Upfront Fees or Payments.</strong> No fees or payments are due or payable by the Client prior to the facility being successfully arranged and funds being made available. The brokerage fee is payable only upon successful arrangement and payout of the facility.</p>
+      </div>
+      <div class="clause">
+        <p>The brokerage fee will be invoiced separately upon confirmation of payout and is payable within <strong>7 business days</strong> of the invoice date. The fee is exclusive of VAT where applicable.</p>
+      </div>
+      <div class="clause">
+        <p>Should the Client withdraw from the transaction after an offer has been accepted and documentation has been signed with the lender, Vital Link Capital reserves the right to charge a reasonable administration fee to cover costs incurred.</p>
+      </div>
+
+      <div class="sig-grid">
+        <div class="sig-block">
+          <div style="height:50px;"></div>
+          <p>Signature of Authorised Signatory</p>
+          <div class="sig-name" id="disp-sig">_______________________</div>
+          <p style="margin-top:8px;">Date: ___________________</p>
+        </div>
+        <div class="sig-block">
+          <div style="height:50px;"></div>
+          <p>Signed on behalf of Vital Link Capital</p>
+          <div class="sig-name" id="disp-sig2">Nathan Mannie — Director</div>
+          <p style="margin-top:8px;">Date: ___________________</p>
+        </div>
+      </div>
+
+      <button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
+    </div>
+  </div>
+</div>
+<script>
+  function update(inputId, displayId) {
+    var el = document.getElementById(inputId);
+    var val = el.tagName === 'SELECT' ? el.options[el.selectedIndex].text : el.value;
+    document.getElementById(displayId).textContent = val || '_______________________';
+    if (inputId === 'fac-amount') calcFee();
+  }
+  function calcFee() {
+    var amountStr = document.getElementById('fac-amount').value.replace(/[^0-9.]/g,'');
+    var amount = parseFloat(amountStr) || 0;
+    var pct = parseFloat(document.getElementById('fee-pct').value) || 1.5;
+    var fee = amount * pct / 100;
+    document.getElementById('disp-fee').textContent = fee > 0 ? 'R ' + fee.toLocaleString('en-ZA', {minimumFractionDigits:2, maximumFractionDigits:2}) : 'R 0.00';
+    document.getElementById('disp-fee-label').textContent = fee > 0 ? pct + '% of facility amount' : 'Enter facility amount above to calculate';
+  }
+  // Init select display
+  document.getElementById('facility-type').dispatchEvent(new Event('change'));
+</script>
+</body>
+</html>

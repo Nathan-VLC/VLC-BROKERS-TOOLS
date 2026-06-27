@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VLC — Broker Instructions</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f4f0; color: #1a1a2e; }
+  header { background: #1a1a2e; padding: 18px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #c9a84c; }
+  .logo { font-size: 1.1rem; font-weight: 700; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
+  .logo span { color: #c9a84c; }
+  .back-btn { color: #c9a84c; text-decoration: none; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+  .back-btn:hover { color: #fff; }
+  .page-hero { background: #1a1a2e; padding: 40px 40px 30px; border-bottom: 1px solid #2a2a4e; }
+  .page-label { color: #c9a84c; font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+  .page-hero h1 { color: #fff; font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
+  .page-hero p { color: #a0a0b8; font-size: 0.95rem; }
+  .content { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+  .step { background: #fff; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); overflow: hidden; }
+  .step-header { background: #1a1a2e; padding: 16px 24px; display: flex; align-items: center; gap: 16px; }
+  .step-num { background: #c9a84c; color: #1a1a2e; font-weight: 800; font-size: 0.9rem; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .step-header h2 { color: #fff; font-size: 1rem; font-weight: 600; }
+  .step-body { padding: 20px 24px; }
+  .step-body p { font-size: 0.92rem; line-height: 1.7; color: #333; margin-bottom: 12px; }
+  ul { padding-left: 20px; margin-bottom: 12px; }
+  ul li { font-size: 0.9rem; line-height: 1.7; color: #333; margin-bottom: 4px; }
+  .copy-box { background: #f8f8f5; border: 1px solid #e0e0d8; border-radius: 6px; padding: 14px 18px; margin-top: 12px; }
+  .copy-box-label { font-size: 0.7rem; font-weight: 700; color: #c9a84c; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .copy-box pre { white-space: pre-wrap; font-family: inherit; font-size: 0.88rem; line-height: 1.65; color: #1a1a2e; }
+  .copy-btn { background: #1a1a2e; color: #c9a84c; border: none; border-radius: 4px; padding: 6px 14px; font-size: 0.75rem; font-weight: 600; cursor: pointer; letter-spacing: 0.5px; text-transform: uppercase; margin-top: 10px; }
+  .copy-btn:hover { background: #c9a84c; color: #1a1a2e; }
+  .copy-btn.copied { background: #2d7a4f; color: #fff; }
+  .rule-box { background: #fff8e6; border-left: 3px solid #c9a84c; padding: 14px 18px; border-radius: 0 6px 6px 0; margin-top: 12px; }
+  .rule-box p { font-size: 0.88rem; color: #5a4a1a; font-style: italic; }
+  .tag { display: inline-block; background: #1a1a2e; color: #c9a84c; font-size: 0.68rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 3px 8px; border-radius: 3px; margin-bottom: 10px; }
+  @media(max-width:600px){ header{padding:14px 20px;} .page-hero{padding:24px 20px;} .step-body{padding:16px;} }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Vital Link <span>Capital</span></div>
+  <a class="back-btn" href="index.html">← Back to Hub</a>
+</header>
+<div class="page-hero">
+  <div class="page-label">Broker Tools · Guide</div>
+  <h1>Broker Instructions</h1>
+  <p>Full 10-step broker process with rules, tools guidance, and WhatsApp message templates.</p>
+</div>
+<div class="content">
+
+  <div class="step">
+    <div class="step-header"><div class="step-num">1</div><h2>Identify and Contact the Prospect</h2></div>
+    <div class="step-body">
+      <div class="tag">Cold Call / Outreach</div>
+      <p>Use the lead tracker to identify your prospects. Call first — WhatsApp or email follows if no answer.</p>
+      <ul>
+        <li>Aim for a minimum of 20 calls per day per broker</li>
+        <li>Best call times: 8:00–10:00 and 14:00–16:30 SAST</li>
+        <li>Always aim to speak to the owner or financial decision-maker directly</li>
+        <li>If gatekeeper answers — use the gatekeeper script (see Cold Call Script tool)</li>
+      </ul>
+      <div class="copy-box">
+        <div class="copy-box-label">WhatsApp — No Answer Follow Up</div>
+        <pre>Hi [Name], my name is [Broker Name] from Vital Link Capital. I tried reaching you earlier. We assist SME business owners in accessing funding — short-term loans, overdraft facilities, and asset finance. No upfront fees or payments at any stage. Please let me know a good time to connect.</pre>
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header"><div class="step-num">2</div><h2>Qualify the Prospect</h2></div>
+    <div class="step-body">
+      <div class="tag">Discovery Call</div>
+      <p>During the first call, qualify the prospect before investing time in an application.</p>
+      <ul>
+        <li>How long has the business been operating? (Minimum 1 year for most products)</li>
+        <li>What is the average monthly turnover?</li>
+        <li>What is the funding requirement and purpose?</li>
+        <li>Does the business have an active business bank account?</li>
+        <li>Any existing loans or judgements? (Important for credit assessment)</li>
+      </ul>
+      <div class="rule-box"><p>Do not submit applications for businesses under 6 months old, with turnover under R50,000 per month, or with clear credit issues before discussing with Nathan.</p></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header"><div class="step-num">3</div><h2>Send the Introduction Message</h2></div>
+    <div class="step-body">
+      <div class="tag">WhatsApp / Email</div>
+      <p>Once qualified, send the appropriate introduction template immediately after the call.</p>
+      <ul>
+        <li>Use the Introduction Templates tool to copy the correct scenario</li>
+        <li>Always personalise with the business name and owner name</li>
+        <li>Confirm: no upfront fees, no payments before funding is received</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header"><div class="step-num">4</div><h2>Request Documents</h2></div>
+    <div class="step-body">
+      <div class="tag">Document Collection</div>
+      <p>Use the Document Request Templates tool to send the correct request message based on the product type.</p>
+      <ul>
+        <li><strong>Short-term loan:</strong> 3 months bank statements, ID copy, proof of business registration</li>
+        <li><strong>Bank overdraft / medium-term:</strong> 6 months bank statements, latest financials or management accounts, ID, registration docs</li>
+        <li><strong>Asset finance:</strong> Quote for asset, 3 months statements, ID, registration</li>
+      </ul>
+      <div class="rule-box"><p>Do not submit incomplete applications. Missing documents cause delays and reflect poorly on the brokerage. Always confirm documents are received before proceeding.</p></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header"><div class="step-num">5</div><h2>Check Affordability</h2></div>
+    <div class="step-body">
+      <div class="tag">Calculator</div>
+      <p>Before submitting, run the Affordability Calculator to confirm the deal makes sense.</p>
+      <ul>
+        <li>Enter the average monthly turnover from bank statements</li>
+        <li>Check the Affordable / Marginal / Not Affordable verdict</li>
+        <li>Marginal deals can still be submitted but manage client expectations</li>
+        <li>Do not submit Not Affordable deals without speaking to Nathan first</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header"><div class="step-num">6</div><h2>Complete the Funding Application Form</h2></div>
+    <div class="step-body">
+      <div class="tag">Client Document</div>
+      <p>Get the client to complete the VLC Funding Application Form before submission to any lender.</p>
+      <ul>
+        <li>Send the form link to the client or complete it together on the call</li>
+        <li>Confirm all fields are complete — especially business registration number, bank details, and required amount</li>
+        <li>Attach the signed form to the submission</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header"><div class="step-num">7</div><h2>Submit to Lenders</h2></div>
+    <div class="step-body">
+      <div class="tag">Submission</div>
+      <p>Submit the complete application pack to the appropriate lender(s) based on the product and client profile.</p>
+      <ul>
+        <li>Short-term loans: submit to 2 to 3 lenders simultaneously for best offer</li>
+        <li>Bank products: submit to the client's primary bank first, then alternatives</li>
+        <li>Update the lead tracker status to "Submitted" immediately after sending</li>
+        <li>Note the lender name and submission date in the tracker</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header"><div class="step-num">8</div><h2>Follow Up with Lenders</h2></div>
+    <div class="step-body">
+      <div class="tag">Pipeline Management</div>
+      <p>Do not wait for lenders to come back to you. Follow up proactively.</p>
+      <ul>
+        <li>Short-term lenders: follow up after 24 hours if no response</li>
+        <li>Bank products: follow up every 48 to 72 hours</li>
+        <li>Keep the client updated at every stage — silence kills deals</li>
+        <li>Update the tracker status as the deal progresses</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header"><div class="step-num">9</div><h2>Present the Offer to the Client</h2></div>
+    <div class="step-body">
+      <div class="tag">Offer Stage</div>
+      <p>Once an offer is received, present it to the client clearly and professionally.</p>
+      <ul>
+        <li>Confirm: loan amount, term, repayment amount, and total cost of credit</li>
+        <li>Explain the repayment structure — daily, weekly, or monthly deductions</li>
+        <li>If client accepts, update the tracker to "Offer Accepted"</li>
+        <li>Obtain signed mandate letter if not already in place</li>
+      </ul>
+      <div class="copy-box">
+        <div class="copy-box-label">WhatsApp — Offer Received</div>
+        <pre>Hi [Name], good news — we have received an offer for [Business Name].
+
+The details are as follows:
+• Loan amount: R[Amount]
+• Term: [X] months
+• Repayment: R[Amount] per [day/week/month]
+
+Please let me know if you would like to proceed and I will get the paperwork moving.</pre>
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header"><div class="step-num">10</div><h2>Close and Record the Deal</h2></div>
+    <div class="step-body">
+      <div class="tag">Close</div>
+      <p>Once funding is paid out, complete the closing process.</p>
+      <ul>
+        <li>Confirm payout with the lender and client</li>
+        <li>Update the tracker status to "Funded" with the payout date and commission amount</li>
+        <li>Request a referral from the client — this is the best time to ask</li>
+        <li>Send a brief thank you message to the client</li>
+      </ul>
+      <div class="copy-box">
+        <div class="copy-box-label">WhatsApp — Payout Confirmation</div>
+        <pre>Hi [Name], congratulations — funding for [Business Name] has been paid out.
+
+It was a pleasure assisting you. If you know any other business owners who may benefit from funding, please do not hesitate to refer them to us.
+
+We are always here when you need us again.</pre>
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+  function copyText(btn) {
+    var pre = btn.closest('.copy-box').querySelector('pre');
+    navigator.clipboard.writeText(pre.textContent.trim()).then(function() {
+      var orig = btn.textContent; btn.textContent = 'Copied!'; btn.classList.add('copied');
+      setTimeout(function(){ btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+</script>
+</body>
+</html>

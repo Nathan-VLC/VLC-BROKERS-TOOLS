@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VLC — Fuel Broker Tools</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f4f0; color: #1a1a2e; }
+  header { background: #1a1a2e; padding: 18px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #c9a84c; }
+  .logo { font-size: 1.1rem; font-weight: 700; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
+  .logo span { color: #c9a84c; }
+  .back-btn { color: #c9a84c; text-decoration: none; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+  .back-btn:hover { color: #fff; }
+  .page-hero { background: #1a1a2e; padding: 40px 40px 30px; }
+  .page-label { color: #c9a84c; font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+  .page-hero h1 { color: #fff; font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
+  .page-hero p { color: #a0a0b8; font-size: 0.95rem; }
+  .content { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+  .tabs { display: flex; background: #fff; border-radius: 8px 8px 0 0; overflow: hidden; }
+  .tab { padding: 14px 20px; cursor: pointer; font-size: 0.85rem; font-weight: 600; color: #666; background: #f0f0ec; transition: all 0.2s; flex: 1; text-align: center; }
+  .tab.active { background: #1a1a2e; color: #c9a84c; }
+  .tab-panel { display: none; background: #fff; border-radius: 0 0 8px 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); padding: 28px; }
+  .tab-panel.active { display: block; }
+  /* Form styles */
+  .section-title { font-size: 0.72rem; font-weight: 700; color: #c9a84c; text-transform: uppercase; letter-spacing: 1.5px; margin: 24px 0 14px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+  .section-title:first-child { margin-top: 0; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 0.75rem; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .field input, .field select, .field textarea { width: 100%; padding: 10px 12px; border: 1.5px solid #ddd; border-radius: 5px; font-size: 0.92rem; font-family: inherit; color: #1a1a2e; background: #fafafa; transition: border 0.2s; }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: #c9a84c; background: #fff; }
+  .pdf-btn { background: #1a1a2e; color: #c9a84c; border: none; border-radius: 6px; padding: 12px 28px; font-size: 0.85rem; font-weight: 700; cursor: pointer; letter-spacing: 0.5px; text-transform: uppercase; margin-top: 8px; }
+  .pdf-btn:hover { background: #c9a84c; color: #1a1a2e; }
+  /* Capture section */
+  #capture-section { background: #fff; padding: 32px; border: 1px solid #eee; border-radius: 6px; margin-top: 28px; }
+  #capture-section .cap-logo { font-size: 1.2rem; font-weight: 800; color: #1a1a2e; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+  #capture-section .cap-logo span { color: #c9a84c; }
+  #capture-section .cap-sub { font-size: 0.78rem; color: #888; margin-bottom: 20px; }
+  #capture-section h3 { font-size: 1rem; font-weight: 700; color: #1a1a2e; margin-bottom: 16px; border-bottom: 2px solid #c9a84c; padding-bottom: 8px; }
+  .cap-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.88rem; }
+  .cap-row .cap-label { color: #888; }
+  .cap-row .cap-val { font-weight: 600; color: #1a1a2e; }
+  /* Info tab */
+  .info-block { background: #f8f8f5; border-radius: 6px; padding: 20px; margin-bottom: 16px; }
+  .info-block h3 { font-size: 0.9rem; font-weight: 700; color: #1a1a2e; margin-bottom: 10px; }
+  .info-block ul { padding-left: 18px; }
+  .info-block li { font-size: 0.88rem; line-height: 1.7; color: #333; margin-bottom: 4px; }
+  .copy-box { background: #f8f8f5; border: 1px solid #e0e0d8; border-left: 3px solid #c9a84c; border-radius: 0 6px 6px 0; padding: 16px 20px; margin-bottom: 16px; }
+  .copy-box pre { white-space: pre-wrap; font-family: inherit; font-size: 0.88rem; line-height: 1.7; color: #1a1a2e; }
+  .copy-btn { background: #1a1a2e; color: #c9a84c; border: none; border-radius: 4px; padding: 6px 14px; font-size: 0.75rem; font-weight: 600; cursor: pointer; letter-spacing: 0.5px; text-transform: uppercase; margin-top: 10px; }
+  .copy-btn:hover { background: #c9a84c; color: #1a1a2e; }
+  .copy-btn.copied { background: #2d7a4f; color: #fff; }
+  @media(max-width:600px){ .field-row{grid-template-columns:1fr;} .tabs{flex-wrap:wrap;} header{padding:14px 20px;} .page-hero{padding:24px 20px;} }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Vital Link <span>Capital</span></div>
+  <a class="back-btn" href="index.html">← Back to Hub</a>
+</header>
+<div class="page-hero">
+  <div class="page-label">Broker Tools · Fuel</div>
+  <h1>Fuel Broker Tools</h1>
+  <p>SA Fuels client enquiry form with PDF download for fuel and transport sector clients.</p>
+</div>
+<div class="content">
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab(0)">Client Enquiry Form</div>
+    <div class="tab" onclick="switchTab(1)">Fuel Sector Guide</div>
+    <div class="tab" onclick="switchTab(2)">WhatsApp Scripts</div>
+  </div>
+
+  <!-- ENQUIRY FORM -->
+  <div class="tab-panel active">
+    <div class="section-title">Client Business Details</div>
+    <div class="field-row">
+      <div class="field"><label>Business Name</label><input type="text" id="f-biz" placeholder="Registered business name"></div>
+      <div class="field"><label>Contact Person</label><input type="text" id="f-contact" placeholder="Owner / manager name"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Cell Number</label><input type="text" id="f-cell" placeholder="Cell number"></div>
+      <div class="field"><label>Email Address</label><input type="text" id="f-email" placeholder="Email address"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Province</label>
+        <select id="f-province">
+          <option value="">Select province</option>
+          <option>Western Cape</option>
+          <option>Eastern Cape</option>
+          <option>Gauteng</option>
+          <option>KwaZulu-Natal</option>
+          <option>Limpopo</option>
+          <option>Mpumalanga</option>
+          <option>North West</option>
+          <option>Free State</option>
+          <option>Northern Cape</option>
+        </select>
+      </div>
+      <div class="field"><label>Years in Operation</label><input type="text" id="f-years" placeholder="e.g. 5 years"></div>
+    </div>
+
+    <div class="section-title">Fuel / Transport Operation</div>
+    <div class="field-row">
+      <div class="field"><label>Operation Type</label>
+        <select id="f-optype">
+          <option value="">Select</option>
+          <option>Fuel Retailer (Filling Station)</option>
+          <option>Fuel Distributor / Reseller</option>
+          <option>Transport Company</option>
+          <option>Mining / Construction Fleet</option>
+          <option>Agricultural Fleet</option>
+          <option>Other Fuel Consumer</option>
+        </select>
+      </div>
+      <div class="field"><label>Number of Vehicles / Pumps</label><input type="text" id="f-vehicles" placeholder="e.g. 12 trucks / 4 pumps"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Monthly Fuel Volume (Litres)</label><input type="text" id="f-volume" placeholder="e.g. 50,000 litres"></div>
+      <div class="field"><label>Current Fuel Supplier</label><input type="text" id="f-supplier" placeholder="e.g. Engen, Shell, independent"></div>
+    </div>
+
+    <div class="section-title">Funding Requirement</div>
+    <div class="field-row">
+      <div class="field"><label>Funding Purpose</label>
+        <select id="f-purpose">
+          <option value="">Select</option>
+          <option>Fuel stock purchase / float</option>
+          <option>Vehicle / fleet acquisition</option>
+          <option>Fleet maintenance and repairs</option>
+          <option>Depot or storage facility</option>
+          <option>Working capital</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="field"><label>Funding Amount Required (R)</label><input type="text" id="f-amount" placeholder="e.g. R500,000"></div>
+    </div>
+    <div class="field"><label>Average Monthly Turnover (R)</label><input type="text" id="f-turnover" placeholder="e.g. R1,200,000"></div>
+    <div class="field"><label>Additional Notes</label><textarea id="f-notes" rows="3" placeholder="Any additional information relevant to the application"></textarea></div>
+
+    <button class="pdf-btn" onclick="generatePDF()">Download PDF</button>
+
+    <!-- CAPTURE SECTION (rendered to PDF) -->
+    <div id="capture-section">
+      <div class="cap-logo">SA Fuels <span>— Powered by Vital Link Capital</span></div>
+      <div class="cap-sub">Fuel and Transport Sector Funding Enquiry</div>
+      <h3>Client Enquiry Form</h3>
+      <div class="cap-row"><span class="cap-label">Business Name</span><span class="cap-val" id="c-biz">—</span></div>
+      <div class="cap-row"><span class="cap-label">Contact Person</span><span class="cap-val" id="c-contact">—</span></div>
+      <div class="cap-row"><span class="cap-label">Cell Number</span><span class="cap-val" id="c-cell">—</span></div>
+      <div class="cap-row"><span class="cap-label">Email Address</span><span class="cap-val" id="c-email">—</span></div>
+      <div class="cap-row"><span class="cap-label">Province</span><span class="cap-val" id="c-province">—</span></div>
+      <div class="cap-row"><span class="cap-label">Years in Operation</span><span class="cap-val" id="c-years">—</span></div>
+      <div class="cap-row"><span class="cap-label">Operation Type</span><span class="cap-val" id="c-optype">—</span></div>
+      <div class="cap-row"><span class="cap-label">Vehicles / Pumps</span><span class="cap-val" id="c-vehicles">—</span></div>
+      <div class="cap-row"><span class="cap-label">Monthly Fuel Volume</span><span class="cap-val" id="c-volume">—</span></div>
+      <div class="cap-row"><span class="cap-label">Current Supplier</span><span class="cap-val" id="c-supplier">—</span></div>
+      <div class="cap-row"><span class="cap-label">Funding Purpose</span><span class="cap-val" id="c-purpose">—</span></div>
+      <div class="cap-row"><span class="cap-label">Funding Amount</span><span class="cap-val" id="c-amount">—</span></div>
+      <div class="cap-row"><span class="cap-label">Monthly Turnover</span><span class="cap-val" id="c-turnover">—</span></div>
+      <div class="cap-row" style="border:none;"><span class="cap-label">Notes</span><span class="cap-val" id="c-notes">—</span></div>
+      <div style="margin-top:20px; padding-top:16px; border-top:1px solid #eee; font-size:0.78rem; color:#888;">
+        Submitted via SA Fuels — Vital Link Capital (Pty) Ltd · Nationwide Business Funding Brokerage · No Upfront Fees
+      </div>
+    </div>
+  </div>
+
+  <!-- GUIDE -->
+  <div class="tab-panel">
+    <div class="info-block">
+      <h3>Why Fuel and Transport Clients Need Funding</h3>
+      <ul>
+        <li>Fuel must be purchased upfront — cash flow gaps between buying and selling fuel are common</li>
+        <li>Fleet expansion or replacement requires significant capital outlay</li>
+        <li>Maintenance costs are high and often unplanned</li>
+        <li>Depot and storage facility setup requires large investment</li>
+        <li>Seasonal demand spikes require stock and capacity ahead of income</li>
+      </ul>
+    </div>
+    <div class="info-block">
+      <h3>Best Funding Products for This Sector</h3>
+      <ul>
+        <li><strong>Short-term loan (3 to 6 months):</strong> Fuel float, stock purchases, emergency repairs</li>
+        <li><strong>Asset finance:</strong> Vehicle and truck acquisition, tankers, equipment</li>
+        <li><strong>Medium-term loan (12 to 36 months):</strong> Fleet expansion, depot development</li>
+        <li><strong>Overdraft facility:</strong> Ongoing working capital for fuel resellers and distributors</li>
+      </ul>
+    </div>
+    <div class="info-block">
+      <h3>Key Qualification Criteria</h3>
+      <ul>
+        <li>Minimum 12 months in operation (preferred 2 plus years for bank products)</li>
+        <li>Active business bank account showing regular turnover</li>
+        <li>Monthly turnover of at least R100,000 for most short-term products</li>
+        <li>Clean or manageable credit profile preferred</li>
+        <li>For asset finance — supplier quote or proforma invoice required</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- WHATSAPP SCRIPTS -->
+  <div class="tab-panel">
+    <div class="copy-box">
+      <div style="font-size:0.7rem; font-weight:700; color:#c9a84c; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Initial Outreach — Fuel Retailer / Distributor</div>
+      <pre>Hi [Name],
+
+My name is [Broker Name] from Vital Link Capital. We are a business funding brokerage that specialises in assisting fuel retailers, distributors, and transport operators in accessing finance.
+
+We help with everything from fuel float funding and working capital to fleet acquisition and depot finance — with no upfront fees or payments at any stage.
+
+Would you be open to a quick call to explore what might be available for [Business Name]?</pre>
+      <button class="copy-btn" onclick="copyText(this)">Copy</button>
+    </div>
+    <div class="copy-box">
+      <div style="font-size:0.7rem; font-weight:700; color:#c9a84c; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Initial Outreach — Transport Company</div>
+      <pre>Hi [Name],
+
+My name is [Broker Name] from Vital Link Capital. We work with transport and logistics companies across South Africa to access business funding — whether for fleet expansion, maintenance, or working capital.
+
+We have access to a range of lenders including asset finance for vehicles and trucks, with no upfront fees or payments at any stage.
+
+Would you be available for a quick call this week?</pre>
+      <button class="copy-btn" onclick="copyText(this)">Copy</button>
+    </div>
+    <div class="copy-box">
+      <div style="font-size:0.7rem; font-weight:700; color:#c9a84c; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Follow Up — After Enquiry Form Received</div>
+      <pre>Hi [Name],
+
+Thank you for completing the enquiry form. I have reviewed your details and I am confident we can find suitable funding options for [Business Name].
+
+The next step is for you to send through:
+• 3 months most recent business bank statements
+• Copy of your ID
+• Proof of business registration
+
+Once received, I will get back to you with the options available as quickly as possible.</pre>
+      <button class="copy-btn" onclick="copyText(this)">Copy</button>
+    </div>
+  </div>
+</div>
+<script>
+  function switchTab(i) {
+    document.querySelectorAll('.tab').forEach((t,idx) => t.classList.toggle('active', idx===i));
+    document.querySelectorAll('.tab-panel').forEach((p,idx) => p.classList.toggle('active', idx===i));
+  }
+  function getVal(id) { var el = document.getElementById(id); return (el.tagName==='SELECT' ? el.options[el.selectedIndex].text : el.value) || '—'; }
+  function generatePDF() {
+    document.getElementById('c-biz').textContent = getVal('f-biz');
+    document.getElementById('c-contact').textContent = getVal('f-contact');
+    document.getElementById('c-cell').textContent = getVal('f-cell');
+    document.getElementById('c-email').textContent = getVal('f-email');
+    document.getElementById('c-province').textContent = getVal('f-province');
+    document.getElementById('c-years').textContent = getVal('f-years');
+    document.getElementById('c-optype').textContent = getVal('f-optype');
+    document.getElementById('c-vehicles').textContent = getVal('f-vehicles');
+    document.getElementById('c-volume').textContent = getVal('f-volume');
+    document.getElementById('c-supplier').textContent = getVal('f-supplier');
+    document.getElementById('c-purpose').textContent = getVal('f-purpose');
+    document.getElementById('c-amount').textContent = getVal('f-amount');
+    document.getElementById('c-turnover').textContent = getVal('f-turnover');
+    document.getElementById('c-notes').textContent = getVal('f-notes');
+    var cap = document.getElementById('capture-section');
+    html2canvas(cap, {scale:2, backgroundColor:'#ffffff'}).then(function(canvas) {
+      var link = document.createElement('a');
+      link.download = 'SA-Fuels-Enquiry-' + (document.getElementById('f-biz').value || 'Client') + '.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+  }
+  function copyText(btn) {
+    var pre = btn.closest('.copy-box').querySelector('pre');
+    navigator.clipboard.writeText(pre.textContent.trim()).then(function() {
+      var orig = btn.textContent; btn.textContent = 'Copied!'; btn.classList.add('copied');
+      setTimeout(function(){ btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+</script>
+</body>
+</html>

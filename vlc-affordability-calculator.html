@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VLC — Affordability Calculator</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f4f0; color: #1a1a2e; }
+  header { background: #1a1a2e; padding: 18px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #c9a84c; }
+  .logo { font-size: 1.1rem; font-weight: 700; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
+  .logo span { color: #c9a84c; }
+  .back-btn { color: #c9a84c; text-decoration: none; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+  .back-btn:hover { color: #fff; }
+  .page-hero { background: #1a1a2e; padding: 40px 40px 30px; }
+  .page-label { color: #c9a84c; font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+  .page-hero h1 { color: #fff; font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
+  .page-hero p { color: #a0a0b8; font-size: 0.95rem; }
+  .content { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+  .tabs { display: flex; background: #fff; border-radius: 8px 8px 0 0; overflow: hidden; }
+  .tab { padding: 14px 20px; cursor: pointer; font-size: 0.85rem; font-weight: 600; color: #666; background: #f0f0ec; transition: all 0.2s; flex: 1; text-align: center; }
+  .tab.active { background: #1a1a2e; color: #c9a84c; }
+  .calc-panel { display: none; background: #fff; border-radius: 0 0 8px 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); padding: 28px; }
+  .calc-panel.active { display: block; }
+  .field-group { margin-bottom: 20px; }
+  label { display: block; font-size: 0.82rem; font-weight: 600; color: #555; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  input, select { width: 100%; padding: 12px 14px; border: 1.5px solid #ddd; border-radius: 6px; font-size: 0.95rem; font-family: inherit; color: #1a1a2e; background: #fafafa; transition: border 0.2s; }
+  input:focus, select:focus { outline: none; border-color: #c9a84c; background: #fff; }
+  .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .calc-btn { background: #1a1a2e; color: #c9a84c; border: none; border-radius: 6px; padding: 14px 28px; font-size: 0.9rem; font-weight: 700; cursor: pointer; width: 100%; margin-top: 8px; letter-spacing: 0.5px; text-transform: uppercase; transition: background 0.2s; }
+  .calc-btn:hover { background: #c9a84c; color: #1a1a2e; }
+  .result { margin-top: 24px; border-radius: 8px; padding: 24px; display: none; }
+  .result.affordable { background: #e8f5ee; border: 2px solid #2d7a4f; }
+  .result.marginal { background: #fff8e6; border: 2px solid #c9a84c; }
+  .result.not-affordable { background: #fdf0f0; border: 2px solid #c0392b; }
+  .verdict { font-size: 1.4rem; font-weight: 800; margin-bottom: 8px; }
+  .verdict.affordable { color: #2d7a4f; }
+  .verdict.marginal { color: #b8860b; }
+  .verdict.not-affordable { color: #c0392b; }
+  .result-rows { margin-top: 16px; }
+  .result-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.08); font-size: 0.9rem; }
+  .result-row:last-child { border-bottom: none; }
+  .result-row .label { color: #555; }
+  .result-row .value { font-weight: 700; color: #1a1a2e; }
+  .result-note { margin-top: 14px; font-size: 0.85rem; color: #666; font-style: italic; }
+  @media(max-width:600px){ .tabs{flex-wrap:wrap;} .calc-grid{grid-template-columns:1fr;} header{padding:14px 20px;} .page-hero{padding:24px 20px;} }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Vital Link <span>Capital</span></div>
+  <a class="back-btn" href="index.html">← Back to Hub</a>
+</header>
+<div class="page-hero">
+  <div class="page-label">Broker Tools · Calc</div>
+  <h1>Affordability Calculator</h1>
+  <p>Short term, overdraft, and medium-term calculators with Affordable, Marginal, and Not Affordable verdicts.</p>
+</div>
+<div class="content">
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab(0)">Short Term Loan</div>
+    <div class="tab" onclick="switchTab(1)">Bank Overdraft</div>
+    <div class="tab" onclick="switchTab(2)">Medium Term Loan</div>
+  </div>
+
+  <!-- SHORT TERM -->
+  <div class="calc-panel active">
+    <div class="calc-grid">
+      <div class="field-group">
+        <label>Average Monthly Turnover (R)</label>
+        <input type="number" id="st-turnover" placeholder="e.g. 150000">
+      </div>
+      <div class="field-group">
+        <label>Loan Amount Required (R)</label>
+        <input type="number" id="st-amount" placeholder="e.g. 80000">
+      </div>
+      <div class="field-group">
+        <label>Loan Term (months)</label>
+        <select id="st-term">
+          <option value="3">3 months</option>
+          <option value="6" selected>6 months</option>
+          <option value="9">9 months</option>
+          <option value="12">12 months</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>Factor Rate (e.g. 1.25 = 25% cost)</label>
+        <input type="number" id="st-factor" placeholder="e.g. 1.25" step="0.01" value="1.25">
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calcShortTerm()">Calculate Affordability</button>
+    <div class="result" id="st-result">
+      <div class="verdict" id="st-verdict"></div>
+      <div class="result-rows" id="st-rows"></div>
+      <div class="result-note" id="st-note"></div>
+    </div>
+  </div>
+
+  <!-- OVERDRAFT -->
+  <div class="calc-panel">
+    <div class="calc-grid">
+      <div class="field-group">
+        <label>Average Monthly Turnover (R)</label>
+        <input type="number" id="od-turnover" placeholder="e.g. 250000">
+      </div>
+      <div class="field-group">
+        <label>Overdraft Limit Required (R)</label>
+        <input type="number" id="od-limit" placeholder="e.g. 100000">
+      </div>
+      <div class="field-group">
+        <label>Existing Monthly Loan Commitments (R)</label>
+        <input type="number" id="od-existing" placeholder="e.g. 15000" value="0">
+      </div>
+      <div class="field-group">
+        <label>Prime Rate (%)</label>
+        <input type="number" id="od-prime" placeholder="e.g. 11.75" step="0.25" value="11.75">
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calcOverdraft()">Calculate Affordability</button>
+    <div class="result" id="od-result">
+      <div class="verdict" id="od-verdict"></div>
+      <div class="result-rows" id="od-rows"></div>
+      <div class="result-note" id="od-note"></div>
+    </div>
+  </div>
+
+  <!-- MEDIUM TERM -->
+  <div class="calc-panel">
+    <div class="calc-grid">
+      <div class="field-group">
+        <label>Average Monthly Turnover (R)</label>
+        <input type="number" id="mt-turnover" placeholder="e.g. 400000">
+      </div>
+      <div class="field-group">
+        <label>Loan Amount Required (R)</label>
+        <input type="number" id="mt-amount" placeholder="e.g. 500000">
+      </div>
+      <div class="field-group">
+        <label>Loan Term (months)</label>
+        <select id="mt-term">
+          <option value="12">12 months</option>
+          <option value="24" selected>24 months</option>
+          <option value="36">36 months</option>
+          <option value="48">48 months</option>
+          <option value="60">60 months</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>Annual Interest Rate (%)</label>
+        <input type="number" id="mt-rate" placeholder="e.g. 14" step="0.5" value="14">
+      </div>
+    </div>
+    <div class="field-group">
+      <label>Existing Monthly Loan Commitments (R)</label>
+      <input type="number" id="mt-existing" placeholder="e.g. 20000" value="0">
+    </div>
+    <button class="calc-btn" onclick="calcMediumTerm()">Calculate Affordability</button>
+    <div class="result" id="mt-result">
+      <div class="verdict" id="mt-verdict"></div>
+      <div class="result-rows" id="mt-rows"></div>
+      <div class="result-note" id="mt-note"></div>
+    </div>
+  </div>
+</div>
+<script>
+  function switchTab(i) {
+    document.querySelectorAll('.tab').forEach((t,idx) => t.classList.toggle('active', idx===i));
+    document.querySelectorAll('.calc-panel').forEach((p,idx) => p.classList.toggle('active', idx===i));
+  }
+  function fmt(n) { return 'R ' + Number(n).toLocaleString('en-ZA', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+  function showResult(id, cls, verdictText, rows, note) {
+    var el = document.getElementById(id+'-result');
+    el.className = 'result ' + cls;
+    el.style.display = 'block';
+    document.getElementById(id+'-verdict').className = 'verdict ' + cls;
+    document.getElementById(id+'-verdict').textContent = verdictText;
+    var rowsHtml = rows.map(function(r){ return '<div class="result-row"><span class="label">'+r[0]+'</span><span class="value">'+r[1]+'</span></div>'; }).join('');
+    document.getElementById(id+'-rows').innerHTML = rowsHtml;
+    document.getElementById(id+'-note').textContent = note;
+  }
+  function calcShortTerm() {
+    var turnover = parseFloat(document.getElementById('st-turnover').value) || 0;
+    var amount = parseFloat(document.getElementById('st-amount').value) || 0;
+    var term = parseInt(document.getElementById('st-term').value);
+    var factor = parseFloat(document.getElementById('st-factor').value) || 1.25;
+    if (!turnover || !amount) { alert('Please enter turnover and loan amount.'); return; }
+    var totalRepay = amount * factor;
+    var monthlyRepay = totalRepay / term;
+    var repayRatio = monthlyRepay / turnover;
+    var cls, verdict, note;
+    if (repayRatio <= 0.20) { cls='affordable'; verdict='AFFORDABLE'; note='Monthly repayment is within acceptable limits. This deal can proceed to submission.'; }
+    else if (repayRatio <= 0.30) { cls='marginal'; verdict='MARGINAL'; note='Monthly repayment is high relative to turnover. Proceed with caution and manage client expectations. Discuss with Nathan before submitting.'; }
+    else { cls='not-affordable'; verdict='NOT AFFORDABLE'; note='Monthly repayment exceeds 30% of monthly turnover. Do not submit without discussing with Nathan. Consider a lower amount or longer term.'; }
+    showResult('st', cls, verdict, [
+      ['Loan Amount', fmt(amount)],
+      ['Total Repayment (factor '+factor+')', fmt(totalRepay)],
+      ['Loan Term', term + ' months'],
+      ['Monthly Repayment', fmt(monthlyRepay)],
+      ['Repayment as % of Turnover', (repayRatio*100).toFixed(1)+'%']
+    ], note);
+  }
+  function calcOverdraft() {
+    var turnover = parseFloat(document.getElementById('od-turnover').value) || 0;
+    var limit = parseFloat(document.getElementById('od-limit').value) || 0;
+    var existing = parseFloat(document.getElementById('od-existing').value) || 0;
+    var prime = parseFloat(document.getElementById('od-prime').value) || 11.75;
+    if (!turnover || !limit) { alert('Please enter turnover and overdraft limit.'); return; }
+    var monthlyInterest = (limit * (prime + 3.5) / 100) / 12;
+    var totalCommitment = monthlyInterest + existing;
+    var commitRatio = totalCommitment / turnover;
+    var limitRatio = limit / turnover;
+    var cls, verdict, note;
+    if (limitRatio <= 0.50 && commitRatio <= 0.15) { cls='affordable'; verdict='AFFORDABLE'; note='Overdraft limit and estimated interest are within acceptable parameters. This deal can proceed to bank submission.'; }
+    else if (limitRatio <= 0.75 && commitRatio <= 0.25) { cls='marginal'; verdict='MARGINAL'; note='Overdraft limit is elevated relative to turnover. Bank may offer a reduced facility. Proceed with caution.'; }
+    else { cls='not-affordable'; verdict='NOT AFFORDABLE'; note='Overdraft limit is too high relative to monthly turnover. Banks typically cap facilities at 50% of monthly turnover. Consider a lower limit.'; }
+    showResult('od', cls, verdict, [
+      ['Overdraft Limit Required', fmt(limit)],
+      ['Limit as % of Monthly Turnover', (limitRatio*100).toFixed(1)+'%'],
+      ['Est. Monthly Interest (Prime + 3.5%)', fmt(monthlyInterest)],
+      ['Existing Monthly Commitments', fmt(existing)],
+      ['Total Monthly Exposure', fmt(totalCommitment)],
+      ['Total Commitment as % of Turnover', (commitRatio*100).toFixed(1)+'%']
+    ], note);
+  }
+  function calcMediumTerm() {
+    var turnover = parseFloat(document.getElementById('mt-turnover').value) || 0;
+    var amount = parseFloat(document.getElementById('mt-amount').value) || 0;
+    var term = parseInt(document.getElementById('mt-term').value);
+    var rate = parseFloat(document.getElementById('mt-rate').value) || 14;
+    var existing = parseFloat(document.getElementById('mt-existing').value) || 0;
+    if (!turnover || !amount) { alert('Please enter turnover and loan amount.'); return; }
+    var monthlyRate = rate / 100 / 12;
+    var monthlyRepay = amount * monthlyRate * Math.pow(1+monthlyRate, term) / (Math.pow(1+monthlyRate, term) - 1);
+    var totalRepay = monthlyRepay * term;
+    var totalInterest = totalRepay - amount;
+    var totalCommitment = monthlyRepay + existing;
+    var commitRatio = totalCommitment / turnover;
+    var cls, verdict, note;
+    if (commitRatio <= 0.25) { cls='affordable'; verdict='AFFORDABLE'; note='Total monthly debt commitment is within acceptable limits. This deal can proceed to bank submission.'; }
+    else if (commitRatio <= 0.35) { cls='marginal'; verdict='MARGINAL'; note='Monthly commitment is elevated. Bank may require additional security or reduce the loan amount. Discuss with Nathan.'; }
+    else { cls='not-affordable'; verdict='NOT AFFORDABLE'; note='Total monthly debt commitment exceeds 35% of turnover. This deal is unlikely to be approved as structured. Consider a lower amount, longer term, or wait until existing commitments are reduced.'; }
+    showResult('mt', cls, verdict, [
+      ['Loan Amount', fmt(amount)],
+      ['Annual Interest Rate', rate.toFixed(2)+'%'],
+      ['Loan Term', term + ' months'],
+      ['Monthly Repayment', fmt(monthlyRepay)],
+      ['Total Interest Payable', fmt(totalInterest)],
+      ['Total Repayment', fmt(totalRepay)],
+      ['Existing Monthly Commitments', fmt(existing)],
+      ['Total Monthly Commitment', fmt(totalCommitment)],
+      ['Total Commitment as % of Turnover', (commitRatio*100).toFixed(1)+'%']
+    ], note);
+  }
+</script>
+</body>
+</html>

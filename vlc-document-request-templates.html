@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VLC — Document Request Templates</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f4f0; color: #1a1a2e; }
+  header { background: #1a1a2e; padding: 18px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #c9a84c; }
+  .logo { font-size: 1.1rem; font-weight: 700; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
+  .logo span { color: #c9a84c; }
+  .back-btn { color: #c9a84c; text-decoration: none; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+  .back-btn:hover { color: #fff; }
+  .page-hero { background: #1a1a2e; padding: 40px 40px 30px; }
+  .page-label { color: #c9a84c; font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+  .page-hero h1 { color: #fff; font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
+  .page-hero p { color: #a0a0b8; font-size: 0.95rem; }
+  .content { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+  .tabs { display: flex; background: #fff; border-radius: 8px 8px 0 0; overflow: hidden; }
+  .tab { padding: 14px 20px; cursor: pointer; font-size: 0.85rem; font-weight: 600; color: #666; background: #f0f0ec; transition: all 0.2s; flex: 1; text-align: center; }
+  .tab.active { background: #1a1a2e; color: #c9a84c; }
+  .tab-panel { display: none; background: #fff; border-radius: 0 0 8px 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); padding: 28px; }
+  .tab-panel.active { display: block; }
+  .copy-box { background: #f8f8f5; border: 1px solid #e0e0d8; border-radius: 6px; padding: 18px 22px; margin-bottom: 20px; }
+  .copy-box-label { font-size: 0.7rem; font-weight: 700; color: #c9a84c; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+  .copy-box pre { white-space: pre-wrap; font-family: inherit; font-size: 0.9rem; line-height: 1.75; color: #1a1a2e; }
+  .copy-btn { background: #1a1a2e; color: #c9a84c; border: none; border-radius: 4px; padding: 7px 16px; font-size: 0.75rem; font-weight: 600; cursor: pointer; letter-spacing: 0.5px; text-transform: uppercase; margin-top: 12px; }
+  .copy-btn:hover { background: #c9a84c; color: #1a1a2e; }
+  .copy-btn.copied { background: #2d7a4f; color: #fff; }
+  .note { background: #fffbf0; border-left: 3px solid #c9a84c; padding: 12px 16px; border-radius: 0 4px 4px 0; font-size: 0.88rem; color: #5a4a1a; margin-bottom: 20px; }
+  @media(max-width:600px){ .tabs{flex-wrap:wrap;} header{padding:14px 20px;} .page-hero{padding:24px 20px;} }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Vital Link <span>Capital</span></div>
+  <a class="back-btn" href="index.html">← Back to Hub</a>
+</header>
+<div class="page-hero">
+  <div class="page-label">Broker Tools · Docs</div>
+  <h1>Document Request Templates</h1>
+  <p>WhatsApp and email templates for requesting documents on short-term and long-term applications.</p>
+</div>
+<div class="content">
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab(0)">Short Term</div>
+    <div class="tab" onclick="switchTab(1)">Bank Facility</div>
+    <div class="tab" onclick="switchTab(2)">Asset Finance</div>
+    <div class="tab" onclick="switchTab(3)">Follow Up</div>
+  </div>
+
+  <!-- SHORT TERM -->
+  <div class="tab-panel active">
+    <div class="note">Use for short-term loans up to 12 months. Minimum documents required for fast turnaround.</div>
+    <div class="copy-box">
+      <div class="copy-box-label">WhatsApp — Short Term Document Request</div>
+      <pre>Hi [Name],
+
+Thank you for your time earlier. To get started on your funding application, please send through the following documents:
+
+1. 3 months most recent business bank statements (PDF preferred)
+2. Copy of your ID document
+3. Proof of business registration (CIPC certificate or similar)
+
+Once received, I will assess your application and come back to you with available options as quickly as possible.
+
+There are no upfront fees or payments at any stage — we will only be in touch once we have an offer for you.
+
+Please send documents to this WhatsApp or email them to [email address].</pre>
+      <button class="copy-btn" onclick="copyText(this)">Copy</button>
+    </div>
+    <div class="copy-box">
+      <div class="copy-box-label">Email — Short Term Document Request</div>
+      <pre>Subject: Document Request — Business Funding Application for [Business Name]
+
+Hi [Name],
+
+Thank you for your time today.
+
+To proceed with your business funding application, please send through the following documents at your earliest convenience:
+
+Required Documents:
+• 3 months most recent business bank statements (PDF format preferred)
+• Copy of your ID document
+• Proof of business registration (CIPC certificate or company documents)
+
+Optional (assists with faster approval):
+• Latest management accounts or income statement
+
+Please send documents to [email address] or reply directly to this email.
+
+There are no upfront fees or payments required from you at any stage.
+
+Kind regards,
+[Broker Name]
+Vital Link Capital
+[Phone Number]</pre>
+      <button class="copy-btn" onclick="copyText(this)">Copy</button>
+    </div>
+  </div>
+
+  <!-- BANK FACILITY -->
+  <div class="tab-panel">
+    <div class="note">Use for bank overdrafts and medium-term loans. More documents required — set expectations with the client upfront.</div>
+    <div class="copy-box">
+      <div class="copy-box-label">WhatsApp — Bank Facility Document Request</div>
+      <pre>Hi [Name],
+
+To get the ball rolling on your bank facility application, the banks require a more complete document pack. Please send through the following:
+
+1. 6 months most recent business bank statements (PDF)
+2. Latest annual financial statements or management accounts (within 12 months)
+3. Copy of your ID document
+4. Proof of business registration (CIPC certificate)
+5. Proof of business address (utility bill or lease agreement)
+6. Company resolution or letter of authority (if applicable)
+
+The more complete the pack, the faster the bank can assess your application.
+
+No upfront fees or payments at any stage. Send to this WhatsApp or email to [email address].</pre>
+      <button class="copy-btn" onclick="copyText(this)">Copy</button>
+    </div>
+    <div class="copy-box">
+      <div class="copy-box-label">Email — Bank Facility Document Request</div>
+      <pre>Subject: Document Requirements — Bank Facility Application for [Business Name]
+
+Hi [Name],
+
+Thank you for considering Vital Link Capital to assist with your bank facility application.
+
+Bank overdraft and medium-term loan applications require a more comprehensive document pack. Please compile and send the following at your earliest convenience:
+
+Required Documents:
+• 6 months most recent business bank statements (PDF format)
+• Latest annual financial statements or management accounts (within the last 12 months)
+• Copy of ID document (owner / directors)
+• Proof of business registration (CIPC certificate or MOI)
+• Proof of business address (not older than 3 months)
+
+Additional Documents (where applicable):
+• Company resolution authorising the application
+• Lease agreement or property ownership documents
+• VAT registration certificate
+
+Please send all documents to [email address].
+
+Our service involves no upfront fees or payments — we are only compensated once a facility is successfully arranged.
+
+Kind regards,
+[Broker Name]
+Vital Link Capital
+[Phone Number]</pre>
+      <button class="copy-btn" onclick="copyText(this)">Copy</button>
+    </div>
+  </div>
+
+  <!-- ASSET FINANCE -->
+  <div class="tab-panel">
+    <div class="note">Use for asset finance and equipment funding. A supplier quote or proforma invoice is essential.</div>
+    <div class="copy-box">
+      <div class="copy-box-label">WhatsApp — Asset Finance Document Request</div>
+      <pre>Hi [Name],
+
+To proceed with your asset finance application, please send through the following:
+
+1. Supplier quote or proforma invoice for the asset (with description and price)
+2. 3 months most recent business bank statements (PDF)
+3. Copy of your ID document
+4. Proof of business registration (CIPC certificate)
+
+If the asset is second-hand, please also include:
+• Proof of ownership from the seller
+• Valuation or market-related price confirmation
+
+No upfront fees or payments required. Please send to this WhatsApp or email to [email address].</pre>
+      <button class="copy-btn" onclick="copyText(this)">Copy</button>
+    </div>
+  </div>
+
+  <!-- FOLLOW UP -->
+  <div class="tab-panel">
+    <div class="copy-box">
+      <div class="copy-box-label">WhatsApp — Friendly Follow Up (Day 2)</div>
+      <pre>Hi [Name], just following up on the documents for your funding application. Please send them through when you get a chance — I want to get your application moving as quickly as possible for you.</pre>
+      <button class="copy-btn" onclick="copyText(this)">Copy</button>
+    </div>
+    <div class="copy-box">
+      <div class="copy-box-label">WhatsApp — Urgent Follow Up (Day 4+)</div>
+      <pre>Hi [Name], I want to make sure we do not miss the opportunity to secure funding for your business. I have not received your documents yet — please send them through today so I can submit your application this week.
+
+If you need the document list again, please let me know and I will resend it.</pre>
+      <button class="copy-btn" onclick="copyText(this)">Copy</button>
+    </div>
+    <div class="copy-box">
+      <div class="copy-box-label">WhatsApp — Final Chase</div>
+      <pre>Hi [Name], I have been trying to reach you regarding your funding application. I will keep your file open until end of this week — please send through your documents before then so we can proceed. After that I will need to archive your application. Let me know if anything has changed on your side.</pre>
+      <button class="copy-btn" onclick="copyText(this)">Copy</button>
+    </div>
+  </div>
+</div>
+<script>
+  function switchTab(i) {
+    document.querySelectorAll('.tab').forEach((t,idx) => t.classList.toggle('active', idx===i));
+    document.querySelectorAll('.tab-panel').forEach((p,idx) => p.classList.toggle('active', idx===i));
+  }
+  function copyText(btn) {
+    var pre = btn.closest('.copy-box').querySelector('pre');
+    navigator.clipboard.writeText(pre.textContent.trim()).then(function() {
+      var orig = btn.textContent; btn.textContent = 'Copied!'; btn.classList.add('copied');
+      setTimeout(function(){ btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+</script>
+</body>
+</html>

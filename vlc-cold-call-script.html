@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VLC — Cold Call Script</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f4f0; color: #1a1a2e; }
+  header { background: #1a1a2e; padding: 18px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #c9a84c; }
+  .logo { font-size: 1.1rem; font-weight: 700; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
+  .logo span { color: #c9a84c; }
+  .back-btn { color: #c9a84c; text-decoration: none; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+  .back-btn:hover { color: #fff; }
+  .page-hero { background: #1a1a2e; padding: 40px 40px 30px; }
+  .page-label { color: #c9a84c; font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+  .page-hero h1 { color: #fff; font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
+  .page-hero p { color: #a0a0b8; font-size: 0.95rem; }
+  .content { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+  .tabs { display: flex; background: #fff; border-radius: 8px 8px 0 0; overflow: hidden; }
+  .tab { padding: 14px 20px; cursor: pointer; font-size: 0.82rem; font-weight: 600; color: #666; border: none; background: #f0f0ec; letter-spacing: 0.3px; transition: all 0.2s; flex: 1; text-align: center; }
+  .tab.active { background: #1a1a2e; color: #c9a84c; }
+  .tab-panel { display: none; background: #fff; border-radius: 0 0 8px 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); padding: 28px; }
+  .tab-panel.active { display: block; }
+  .stage { margin-bottom: 28px; padding-bottom: 28px; border-bottom: 1px solid #eee; }
+  .stage:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .stage-num { color: #c9a84c; font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+  .stage h3 { font-size: 1rem; font-weight: 700; color: #1a1a2e; margin-bottom: 14px; }
+  .script-box { background: #f8f8f5; border: 1px solid #e0e0d8; border-left: 3px solid #c9a84c; border-radius: 0 6px 6px 0; padding: 16px 20px; margin-bottom: 10px; }
+  .script-box pre { white-space: pre-wrap; font-family: inherit; font-size: 0.9rem; line-height: 1.75; color: #1a1a2e; }
+  .copy-btn { background: #1a1a2e; color: #c9a84c; border: none; border-radius: 4px; padding: 6px 14px; font-size: 0.75rem; font-weight: 600; cursor: pointer; letter-spacing: 0.5px; text-transform: uppercase; margin-top: 10px; }
+  .copy-btn:hover { background: #c9a84c; color: #1a1a2e; }
+  .copy-btn.copied { background: #2d7a4f; color: #fff; }
+  .objection { background: #fff; border: 1px solid #e0e0d8; border-radius: 6px; margin-bottom: 14px; overflow: hidden; }
+  .obj-q { background: #1a1a2e; color: #c9a84c; padding: 12px 18px; font-size: 0.88rem; font-weight: 600; }
+  .obj-a { padding: 14px 18px; font-size: 0.9rem; line-height: 1.65; color: #333; }
+  .tip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .tip-box { background: #f8f8f5; border-radius: 6px; padding: 18px; }
+  .tip-box h4 { font-size: 0.82rem; font-weight: 700; color: #c9a84c; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+  .tip-box ul { padding-left: 18px; }
+  .tip-box li { font-size: 0.88rem; line-height: 1.7; color: #333; margin-bottom: 4px; }
+  @media(max-width:600px){ .tabs{flex-wrap:wrap;} .tip-grid{grid-template-columns:1fr;} header{padding:14px 20px;} .page-hero{padding:24px 20px;} }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Vital Link <span>Capital</span></div>
+  <a class="back-btn" href="index.html">← Back to Hub</a>
+</header>
+<div class="page-hero">
+  <div class="page-label">Broker Tools · Script</div>
+  <h1>Cold Call Script</h1>
+  <p>5-stage call script, 7 objection handlers, follow-up templates, and calling tips.</p>
+</div>
+<div class="content">
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab(0)">Main Script</div>
+    <div class="tab" onclick="switchTab(1)">Objections</div>
+    <div class="tab" onclick="switchTab(2)">Follow Up</div>
+    <div class="tab" onclick="switchTab(3)">Tips</div>
+  </div>
+
+  <!-- MAIN SCRIPT -->
+  <div class="tab-panel active">
+    <div class="stage">
+      <div class="stage-num">Stage 1</div>
+      <h3>Opening — Get Past the First 5 Seconds</h3>
+      <div class="script-box">
+        <pre>"Good morning / afternoon. Am I speaking with [Name]?"
+
+[Yes] → "Hi [Name], my name is [Broker Name] calling from Vital Link Capital. We are a business funding brokerage. I promise I will be very brief — do you have two minutes?"</pre>
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+      </div>
+    </div>
+    <div class="stage">
+      <div class="stage-num">Stage 2</div>
+      <h3>Value Statement — What We Do</h3>
+      <div class="script-box">
+        <pre>"We assist SME business owners across South Africa in accessing funding quickly — short-term loans, overdraft facilities, medium-term loans, and asset finance.
+
+Our service involves no upfront fees or payments at any stage. We are only compensated once funding is successfully arranged for you."</pre>
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+      </div>
+    </div>
+    <div class="stage">
+      <div class="stage-num">Stage 3</div>
+      <h3>Hook — Open the Conversation</h3>
+      <div class="script-box">
+        <pre>"A lot of the business owners we speak to are either looking to manage cash flow, purchase stock or equipment, or simply want a credit facility available for when they need it.
+
+Is there anything along those lines that your business could benefit from right now?"</pre>
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+      </div>
+    </div>
+    <div class="stage">
+      <div class="stage-num">Stage 4</div>
+      <h3>Qualify — Quick Discovery</h3>
+      <div class="script-box">
+        <pre>[If interested:]
+"Excellent. Just to make sure I can find the right options for you — how long has the business been operating, and what does your average monthly turnover look like?
+
+And what amount were you thinking of in terms of funding?"</pre>
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+      </div>
+    </div>
+    <div class="stage">
+      <div class="stage-num">Stage 5</div>
+      <h3>Close — Next Step</h3>
+      <div class="script-box">
+        <pre>"Based on what you have told me, I am confident we can find options for you. The next step is for me to send you a quick WhatsApp with what we will need to get started — just three months of bank statements and a copy of your ID.
+
+Can I send that through to you now on this number?"
+
+[Yes] → "Perfect. You will receive it in the next few minutes. I will be in touch shortly after. Thank you for your time, [Name]."</pre>
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OBJECTIONS -->
+  <div class="tab-panel">
+    <div class="objection">
+      <div class="obj-q">"I am not interested."</div>
+      <div class="obj-a">"I completely understand — and I am not here to push anything. Most business owners I speak to already have access to funding or are not looking right now. Out of curiosity, if you ever did need quick access to capital for your business, do you have a reliable route to get it? I just want to make sure you know we are here when you need us."</div>
+    </div>
+    <div class="objection">
+      <div class="obj-q">"I already use my bank."</div>
+      <div class="obj-a">"That is great — your bank is an important relationship to maintain. We actually work alongside bank facilities, not against them. A lot of our clients use a short-term lender for quicker access to funds when the bank process takes too long. We can often have money in your account within 24 to 48 hours. Would that kind of speed ever be useful to you?"</div>
+    </div>
+    <div class="objection">
+      <div class="obj-q">"What are your fees?"</div>
+      <div class="obj-a">"There are no upfront fees or payments from you at any stage. We are compensated by the lender once funding is successfully arranged. You only pay the loan repayment — nothing else before or during the process."</div>
+    </div>
+    <div class="objection">
+      <div class="obj-q">"I am too busy right now."</div>
+      <div class="obj-a">"I appreciate that — I will be very quick. All I need is two minutes now and the rest can be handled by WhatsApp at your own pace. When would be a better time to speak — this afternoon or tomorrow morning?"</div>
+    </div>
+    <div class="objection">
+      <div class="obj-q">"We had a bad experience with a loan before."</div>
+      <div class="obj-a">"I am sorry to hear that — it is unfortunately common in this industry. That is exactly why we work the way we do. We assess affordability properly before submitting anything, we do not push unsuitable products, and there are no hidden costs. Would you be open to hearing what options exist now, without any commitment?"</div>
+    </div>
+    <div class="objection">
+      <div class="obj-q">"Send me an email."</div>
+      <div class="obj-a">"Of course — I will send that through right away. Just so I can make it relevant to your business, can I ask quickly: what is the primary reason you would consider funding — cash flow, equipment, or something else? That way my email will be worth reading."</div>
+    </div>
+    <div class="objection">
+      <div class="obj-q">"We do not qualify / we have bad credit."</div>
+      <div class="obj-a">"I hear you — and I appreciate the honesty. Credit history is one factor but it is not always the deciding one. Some of our lenders look at bank statement cashflow as the primary criteria. It costs nothing to check. Would you like me to do a quick assessment and come back to you with what is available?"</div>
+    </div>
+  </div>
+
+  <!-- FOLLOW UP -->
+  <div class="tab-panel">
+    <div class="stage">
+      <div class="stage-num">Follow Up 1</div>
+      <h3>No Answer — Second Attempt</h3>
+      <div class="script-box">
+        <pre>"Good [morning/afternoon] [Name], this is [Broker Name] from Vital Link Capital. I tried to reach you earlier — I am following up on business funding options for [Business Name]. Please give me a call back on [number] when you have a moment, or let me know a good time to reach you. Thank you."</pre>
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+      </div>
+    </div>
+    <div class="stage">
+      <div class="stage-num">Follow Up 2</div>
+      <h3>Documents Not Received</h3>
+      <div class="script-box">
+        <pre>"Hi [Name], I just wanted to follow up on the documents for your funding application. I have not received them yet — please send through when you get a chance and I will get things moving straight away. Let me know if you need me to resend the document checklist."</pre>
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+      </div>
+    </div>
+    <div class="stage">
+      <div class="stage-num">Follow Up 3</div>
+      <h3>Application Update — Awaiting Lender</h3>
+      <div class="script-box">
+        <pre>"Hi [Name], just a quick update — your application has been submitted and we are awaiting feedback from the lender. I will be in touch as soon as we have an outcome. In the meantime, please do not hesitate to reach out if you have any questions."</pre>
+        <button class="copy-btn" onclick="copyText(this)">Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIPS -->
+  <div class="tab-panel">
+    <div class="tip-grid">
+      <div class="tip-box">
+        <h4>Best Times to Call</h4>
+        <ul>
+          <li>08:00 to 10:00 — owners at their desk before the day gets busy</li>
+          <li>14:00 to 16:30 — post-lunch, decisions are made in the afternoon</li>
+          <li>Avoid Mondays before 9am and Fridays after 3pm</li>
+          <li>Mid-week (Tue/Wed/Thu) is most effective</li>
+        </ul>
+      </div>
+      <div class="tip-box">
+        <h4>Daily Targets</h4>
+        <ul>
+          <li>Minimum 20 calls per day per broker</li>
+          <li>Target: 3 to 5 interested prospects per day</li>
+          <li>Target: 1 to 2 document requests per day</li>
+          <li>Update the lead tracker after every call — no exceptions</li>
+        </ul>
+      </div>
+      <div class="tip-box">
+        <h4>Power Words That Work</h4>
+        <ul>
+          <li>"Quick" and "brief" — reduces resistance immediately</li>
+          <li>"No upfront fees" — say it early and clearly</li>
+          <li>"Within 24 to 48 hours" — urgency and speed</li>
+          <li>"No obligation" — lowers the prospect's guard</li>
+          <li>"We only get paid when you get funded"</li>
+        </ul>
+      </div>
+      <div class="tip-box">
+        <h4>Words to Avoid</h4>
+        <ul>
+          <li>"Interest rate" — leads to price objections early</li>
+          <li>"Success fee" — do not use this language</li>
+          <li>"If you qualify" — sounds like you doubt them</li>
+          <li>"Are you the owner?" — gatekeepers will block you</li>
+          <li>Filler words: "um", "like", "basically", "so ja"</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  function switchTab(i) {
+    document.querySelectorAll('.tab').forEach((t,idx) => t.classList.toggle('active', idx===i));
+    document.querySelectorAll('.tab-panel').forEach((p,idx) => p.classList.toggle('active', idx===i));
+  }
+  function copyText(btn) {
+    var pre = btn.closest('.script-box').querySelector('pre');
+    navigator.clipboard.writeText(pre.textContent.trim()).then(function() {
+      var orig = btn.textContent; btn.textContent = 'Copied!'; btn.classList.add('copied');
+      setTimeout(function(){ btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+</script>
+</body>
+</html>
