@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vital Link Capital — Broker Tools Hub</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f4f0; color: #1a1a2e; }
+  header { background: #1a1a2e; padding: 18px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #c9a84c; }
+  .logo { font-size: 1.1rem; font-weight: 700; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
+  .logo span { color: #c9a84c; }
+  .hub-badge { background: transparent; border: 1.5px solid #c9a84c; color: #c9a84c; font-size: 0.75rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 8px 18px; border-radius: 4px; }
+  .hero { background: #1a1a2e; padding: 60px 40px 50px; border-bottom: 1px solid #2a2a4e; }
+  .hero-label { color: #c9a84c; font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 14px; }
+  .hero h1 { color: #fff; font-size: 2.6rem; font-weight: 800; margin-bottom: 14px; line-height: 1.2; }
+  .hero p { color: #a0a0b8; font-size: 1rem; max-width: 520px; line-height: 1.65; }
+  .content { max-width: 1100px; margin: 0 auto; padding: 50px 24px; }
+  .section-label { color: #c9a84c; font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+  .section-title { font-size: 1.3rem; font-weight: 700; color: #1a1a2e; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid #ddd; }
+  .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 50px; }
+  .card { background: #fff; border-radius: 8px; padding: 28px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); border: 1px solid #eee; transition: box-shadow 0.2s, border-color 0.2s; text-decoration: none; display: flex; flex-direction: column; }
+  .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); border-color: #c9a84c; }
+  .card-tag { color: #c9a84c; font-size: 0.68rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+  .card h3 { color: #1a1a2e; font-size: 1.05rem; font-weight: 700; margin-bottom: 10px; }
+  .card p { color: #666; font-size: 0.87rem; line-height: 1.6; flex: 1; }
+  .card-link { color: #c9a84c; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-top: 18px; }
+  /* Featured card */
+  .card.featured { background: #1a1a2e; border-color: #c9a84c; border-width: 2px; }
+  .card.featured h3 { color: #fff; }
+  .card.featured p { color: #a0a0b8; }
+  .card.featured .card-tag { color: #c9a84c; }
+  .card.featured .card-link { color: #c9a84c; }
+  footer { background: #1a1a2e; border-top: 2px solid #c9a84c; padding: 24px 40px; text-align: center; }
+  footer p { color: #a0a0b8; font-size: 0.82rem; }
+  footer span { color: #c9a84c; }
+  @media(max-width:900px){ .card-grid{grid-template-columns:1fr 1fr;} }
+  @media(max-width:600px){ .card-grid{grid-template-columns:1fr;} header{padding:14px 20px;} .hero{padding:36px 20px;} .hero h1{font-size:1.8rem;} .content{padding:32px 16px;} }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Vital Link <span>Capital</span></div>
+  <div class="hub-badge">Broker Tools Hub</div>
+</header>
+
+<div class="hero">
+  <div class="hero-label">Internal Use Only</div>
+  <h1>VLC Broker Tools &amp; Templates</h1>
+  <p>All broker tools, scripts, and client documents in one place. Click any card to open the tool directly in your browser.</p>
+</div>
+
+<div class="content">
+
+  <div class="section-label">Command Centre</div>
+  <div class="section-title">All-in-One Tool</div>
+  <div class="card-grid" style="grid-template-columns:1fr;">
+    <a class="card featured" href="vlc-command-centre.html">
+      <div class="card-tag">New · Command Centre</div>
+      <h3>VLC Command Centre — Dialler + Tracker + Targets</h3>
+      <p>All three tools in one. Syncs live from your Google Sheet lead tracker. Auto-assigns leads to each broker's dialler. Track pipeline stages, call outcomes, and sales targets — all from your phone or desktop.</p>
+      <div class="card-link">Open Command Centre →</div>
+    </a>
+  </div>
+
+  <div class="section-label">Broker Tools</div>
+  <div class="section-title">Daily Working Tools</div>
+  <div class="card-grid">
+    <a class="card" href="vlc-introduction-templates.html">
+      <div class="card-tag">Intro</div>
+      <h3>Introduction Templates</h3>
+      <p>WhatsApp and email introduction scripts for all 4 scenarios — General, Gatekeeper, After Call, and Referral.</p>
+      <div class="card-link">Open Tool →</div>
+    </a>
+    <a class="card" href="vlc-broker-instructions.html">
+      <div class="card-tag">Guide</div>
+      <h3>Broker Instructions</h3>
+      <p>Full 10-step broker process, rules, tools guide, and WhatsApp message templates with copy buttons.</p>
+      <div class="card-link">Open Tool →</div>
+    </a>
+    <a class="card" href="vlc-cold-call-script.html">
+      <div class="card-tag">Script</div>
+      <h3>Cold Call Script</h3>
+      <p>5-stage cold call script with 7 objection handlers, follow-up templates, and calling tips.</p>
+      <div class="card-link">Open Tool →</div>
+    </a>
+    <a class="card" href="vlc-document-request-templates.html">
+      <div class="card-tag">Docs</div>
+      <h3>Document Request Templates</h3>
+      <p>WhatsApp and email document request messages for short-term and long-term applications.</p>
+      <div class="card-link">Open Tool →</div>
+    </a>
+    <a class="card" href="vlc-affordability-calculator.html">
+      <div class="card-tag">Calc</div>
+      <h3>Affordability Calculator</h3>
+      <p>Short-term, overdraft, and medium-term calculators with Affordable, Marginal, and Not Affordable verdicts.</p>
+      <div class="card-link">Open Tool →</div>
+    </a>
+    <a class="card" href="vlc-fuel-broker-tools.html">
+      <div class="card-tag">Fuel</div>
+      <h3>Fuel Broker Tools</h3>
+      <p>SA Fuels client enquiry form with PDF download for fuel and transport sector clients.</p>
+      <div class="card-link">Open Tool →</div>
+    </a>
+  </div>
+
+  <div class="section-label">Client Documents</div>
+  <div class="section-title">Client-Facing Documents</div>
+  <div class="card-grid">
+    <a class="card" href="vlc-mandate-letter.html">
+      <div class="card-tag">Mandate</div>
+      <h3>Mandate Letter</h3>
+      <p>Client mandate authorising Vital Link Capital to source funding on their behalf. Fill in and print for signature.</p>
+      <div class="card-link">Open Document →</div>
+    </a>
+    <a class="card" href="vlc-success-fee-agreement.html">
+      <div class="card-tag">Agreement</div>
+      <h3>Brokerage Fee Agreement</h3>
+      <p>Fee agreement for bank facility and long-term finance products. Auto-calculates the brokerage fee.</p>
+      <div class="card-link">Open Document →</div>
+    </a>
+    <a class="card" href="vlc-funding-application-form.html">
+      <div class="card-tag">Application</div>
+      <h3>Funding Application Form</h3>
+      <p>Complete client application form covering business details, financials, and funding requirements.</p>
+      <div class="card-link">Open Document →</div>
+    </a>
+  </div>
+
+</div>
+
+<footer>
+  <p><span>Vital Link Capital (Pty) Ltd</span> · Milnerton, Cape Town · Nationwide · Internal Use Only</p>
+</footer>
+</body>
+</html>

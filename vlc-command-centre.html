@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>VLC Command Centre</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body { width:100%; overflow-x:hidden; font-family:'Segoe UI',Arial,sans-serif; background:#0f0f1e; color:#fff; }
+
+/* ── HEADER ── */
+.hdr { background:#1a1a2e; padding:12px 14px; display:flex; align-items:center; justify-content:space-between; border-bottom:2px solid #c9a84c; position:sticky; top:0; z-index:200; }
+.logo { font-size:.9rem; font-weight:900; color:#fff; text-transform:uppercase; letter-spacing:1px; }
+.logo span { color:#c9a84c; }
+.sync-btn { background:#c9a84c; color:#1a1a2e; border:none; border-radius:20px; padding:6px 14px; font-size:.72rem; font-weight:800; cursor:pointer; }
+.sync-btn:active { opacity:.8; }
+
+/* ── NAV TABS ── */
+.nav { background:#1a1a2e; display:flex; border-bottom:2px solid #2a2a4e; overflow-x:auto; }
+.nav::-webkit-scrollbar { display:none; }
+.nav-btn { padding:11px 18px; border:none; background:transparent; color:#a0a0b8; font-size:.8rem; font-weight:700; cursor:pointer; white-space:nowrap; border-bottom:3px solid transparent; flex-shrink:0; }
+.nav-btn.active { color:#c9a84c; border-bottom-color:#c9a84c; }
+
+/* ── BROKER BAR ── */
+.broker-bar { background:#141428; padding:8px 14px; display:flex; gap:6px; overflow-x:auto; border-bottom:1px solid #2a2a4e; }
+.broker-bar::-webkit-scrollbar { display:none; }
+.b-btn { background:#2a2a4e; color:#a0a0b8; border:none; border-radius:20px; padding:6px 14px; font-size:.75rem; font-weight:600; cursor:pointer; white-space:nowrap; flex-shrink:0; }
+.b-btn.active { background:#c9a84c; color:#1a1a2e; }
+
+/* ── STATS ── */
+.stats { background:#1a1a2e; display:flex; border-bottom:1px solid #2a2a4e; }
+.stat { flex:1; text-align:center; padding:8px 4px; }
+.stat-n { font-size:1.1rem; font-weight:900; color:#c9a84c; }
+.stat-l { font-size:.55rem; color:#a0a0b8; text-transform:uppercase; letter-spacing:.5px; margin-top:1px; }
+.stat-d { width:1px; background:#2a2a4e; }
+
+/* ── SEARCH ── */
+.search-row { padding:10px 12px; background:#0f0f1e; display:flex; gap:6px; }
+.s-input { flex:1; min-width:0; background:#1a1a2e; border:1px solid #2a2a4e; border-radius:8px; padding:9px 12px; color:#fff; font-size:.82rem; outline:none; }
+.s-input:focus { border-color:#c9a84c; }
+.s-input::placeholder { color:#4a4a6e; }
+.f-btn { background:#1a1a2e; border:1px solid #2a2a4e; border-radius:8px; padding:9px 10px; color:#c9a84c; font-size:.7rem; font-weight:700; cursor:pointer; white-space:nowrap; flex-shrink:0; }
+.f-btn.active { background:#c9a84c; color:#1a1a2e; border-color:#c9a84c; }
+
+/* ── SECTION LABEL ── */
+.sec-lbl { font-size:.62rem; font-weight:700; color:#4a4a6e; text-transform:uppercase; letter-spacing:2px; padding:10px 14px 4px; }
+
+/* ── LEAD CARDS ── */
+.leads-wrap { padding:0 12px 110px; }
+.card { background:#1a1a2e; border-radius:10px; margin-bottom:10px; overflow:hidden; border:1px solid #2a2a4e; width:100%; }
+.card.answered   { border-left:4px solid #10b981; }
+.card.voicemail  { border-left:4px solid #6b7280; }
+.card.no-answer  { border-left:4px solid #f97316; }
+.card.interested { border-left:4px solid #3b82f6; }
+.card.declined   { border-left:4px solid #ef4444; opacity:.6; }
+.card.wrong-number { border-left:4px solid #ef4444; opacity:.5; }
+.card.in-progress { border-left:4px solid #c9a84c; }
+
+.card-top { padding:12px 12px 8px; display:flex; align-items:center; gap:8px; }
+.card-info { flex:1; min-width:0; }
+.card-name { font-size:.9rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.card-biz  { font-size:.75rem; color:#a0a0b8; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px; }
+.card-tags { display:flex; gap:4px; margin-top:5px; flex-wrap:wrap; }
+.tag { font-size:.58rem; font-weight:700; padding:2px 7px; border-radius:10px; text-transform:uppercase; white-space:nowrap; }
+.tg-ind   { background:#2a2a4e; color:#a0a0b8; }
+.tg-amt   { background:#1e3a2e; color:#10b981; }
+.tg-new   { background:#1e2a4e; color:#60a5fa; }
+.tg-prog  { background:#3a2a10; color:#c9a84c; }
+.tg-hot   { background:#1e2a4e; color:#3b82f6; }
+.tg-fund  { background:#1e3a2e; color:#10b981; }
+
+.call-btn { background:#10b981; border:none; border-radius:50px; padding:10px 14px; color:#fff; font-size:.78rem; font-weight:800; text-decoration:none; display:flex; align-items:center; gap:4px; flex-shrink:0; white-space:nowrap; cursor:pointer; }
+.call-btn:active { background:#059669; }
+
+/* outcome buttons */
+.out-bar { padding:7px 12px; background:#141428; display:flex; gap:5px; flex-wrap:wrap; border-top:1px solid #2a2a4e; }
+.ob { border:none; border-radius:16px; padding:5px 9px; font-size:.65rem; font-weight:700; cursor:pointer; white-space:nowrap; text-transform:uppercase; }
+.ob-ans  { background:#1e3a2e; color:#10b981; } .ob-ans.sel  { background:#10b981; color:#fff; }
+.ob-vm   { background:#2a2a4e; color:#a0a0b8; } .ob-vm.sel   { background:#6b7280; color:#fff; }
+.ob-na   { background:#3a2010; color:#f97316; } .ob-na.sel   { background:#f97316; color:#fff; }
+.ob-int  { background:#1e2a4e; color:#60a5fa; } .ob-int.sel  { background:#3b82f6; color:#fff; }
+.ob-dec  { background:#3a1010; color:#f87171; } .ob-dec.sel  { background:#ef4444; color:#fff; }
+.ob-wn   { background:#3a1010; color:#f87171; } .ob-wn.sel   { background:#ef4444; color:#fff; }
+
+.notes-row { padding:0 12px 10px; }
+.notes-in  { width:100%; background:#0f0f1e; border:1px solid #2a2a4e; border-radius:6px; padding:7px 10px; color:#fff; font-size:.78rem; resize:none; outline:none; }
+.notes-in:focus { border-color:#c9a84c; }
+.notes-in::placeholder { color:#4a4a6e; }
+
+/* ── PIPELINE MINI ── */
+.pipe-row { padding:6px 12px 10px; display:flex; gap:4px; flex-wrap:wrap; }
+.pipe-item { display:flex; align-items:center; gap:4px; font-size:.65rem; }
+.pipe-dot  { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.pipe-lbl  { color:#a0a0b8; }
+.pipe-val  { color:#fff; font-weight:700; }
+
+/* ── BOTTOM BAR ── */
+.bot-bar { position:fixed; bottom:0; left:0; right:0; background:#1a1a2e; border-top:2px solid #c9a84c; padding:10px 12px; display:flex; gap:8px; z-index:150; }
+.next-btn { flex:1; background:#10b981; color:#fff; border:none; border-radius:8px; padding:13px; font-size:.9rem; font-weight:800; cursor:pointer; }
+.next-btn:active { background:#059669; }
+.add-btn  { background:#c9a84c; color:#1a1a2e; border:none; border-radius:8px; padding:13px 16px; font-size:1.1rem; font-weight:900; cursor:pointer; }
+
+/* ── TARGETS TAB ── */
+.targets-wrap { padding:12px; }
+.tgt-card { background:#1a1a2e; border-radius:10px; padding:16px; margin-bottom:12px; border-left:4px solid #c9a84c; }
+.tgt-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.tgt-broker { font-size:1rem; font-weight:800; }
+.tgt-score  { font-size:1.2rem; font-weight:900; color:#c9a84c; }
+.tgt-row    { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.tgt-lbl    { font-size:.72rem; color:#a0a0b8; width:80px; flex-shrink:0; text-transform:uppercase; }
+.tgt-bar-wrap { flex:1; background:#2a2a4e; border-radius:6px; height:8px; overflow:hidden; }
+.tgt-bar    { height:100%; border-radius:6px; transition:width .4s; }
+.tgt-pct    { font-size:.72rem; font-weight:700; width:36px; text-align:right; flex-shrink:0; }
+.tgt-edit   { background:#2a2a4e; border:none; border-radius:6px; padding:5px 10px; color:#c9a84c; font-size:.7rem; font-weight:700; cursor:pointer; flex-shrink:0; }
+
+/* ── ADD MODAL ── */
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:400; display:none; align-items:flex-end; }
+.modal-overlay.open { display:flex; }
+.modal { background:#1a1a2e; border-radius:16px 16px 0 0; padding:18px 16px 28px; width:100%; max-height:90vh; overflow-y:auto; border-top:3px solid #c9a84c; }
+.modal-title { font-size:.95rem; font-weight:800; margin-bottom:12px; }
+.mf { margin-bottom:10px; }
+.mf label { display:block; font-size:.65rem; font-weight:700; color:#c9a84c; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px; }
+.mf input, .mf select { width:100%; background:#0f0f1e; border:1px solid #2a2a4e; border-radius:8px; padding:10px 12px; color:#fff; font-size:.85rem; outline:none; }
+.mf input:focus, .mf select:focus { border-color:#c9a84c; }
+.mf select option { background:#1a1a2e; }
+.modal-btns { display:flex; gap:8px; margin-top:12px; }
+.m-save   { flex:1; background:#c9a84c; color:#1a1a2e; border:none; border-radius:8px; padding:12px; font-weight:800; font-size:.88rem; cursor:pointer; }
+.m-cancel { background:#2a2a4e; color:#a0a0b8; border:none; border-radius:8px; padding:12px 16px; font-weight:700; cursor:pointer; }
+
+/* ── TARGET EDIT MODAL ── */
+.tgt-modal { display:none; }
+.tgt-modal.open { display:flex; }
+
+.empty { text-align:center; padding:50px 20px; color:#4a4a6e; font-size:.9rem; }
+
+/* loading */
+.loading { text-align:center; padding:40px; color:#c9a84c; font-size:.85rem; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="logo">Vital Link <span>Capital</span></div>
+  <button class="sync-btn" onclick="syncSheet()">⟳ Sync Sheet</button>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <button class="nav-btn active" onclick="switchTab('dialler',this)">📞 Dialler</button>
+  <button class="nav-btn" onclick="switchTab('tracker',this)">📋 Tracker</button>
+  <button class="nav-btn" onclick="switchTab('targets',this)">🎯 Targets</button>
+</div>
+
+<!-- BROKER BAR -->
+<div class="broker-bar">
+  <button class="b-btn active" onclick="setBroker('All',this)">All</button>
+  <button class="b-btn" onclick="setBroker('Nathan',this)">Nathan</button>
+  <button class="b-btn" onclick="setBroker('Angelo',this)">Angelo</button>
+  <button class="b-btn" onclick="setBroker('Craig',this)">Craig</button>
+  <button class="b-btn" onclick="setBroker('Joshua',this)">Joshua</button>
+  <button class="b-btn" onclick="setBroker('Cameron',this)">Cameron</button>
+  <button class="b-btn" onclick="setBroker('Mohammed',this)">Mohammed</button>
+</div>
+
+<!-- DIALLER TAB -->
+<div id="tab-dialler">
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat"><div class="stat-n" id="s-total">0</div><div class="stat-l">Total</div></div>
+    <div class="stat-d"></div>
+    <div class="stat"><div class="stat-n" id="s-left">0</div><div class="stat-l">Left</div></div>
+    <div class="stat-d"></div>
+    <div class="stat"><div class="stat-n" id="s-ans">0</div><div class="stat-l">Answered</div></div>
+    <div class="stat-d"></div>
+    <div class="stat"><div class="stat-n" id="s-int">0</div><div class="stat-l">Hot</div></div>
+    <div class="stat-d"></div>
+    <div class="stat"><div class="stat-n" id="s-vm">0</div><div class="stat-l">Voicemail</div></div>
+  </div>
+  <!-- SEARCH -->
+  <div class="search-row">
+    <input class="s-input" id="d-search" type="text" placeholder="Search name, business, number..." oninput="renderDialler()">
+    <button class="f-btn" id="f-uncalled" onclick="toggleFilter('uncalled')">Uncalled</button>
+    <button class="f-btn" id="f-callback" onclick="toggleFilter('callback')">Hot</button>
+  </div>
+  <div id="dialler-list" class="leads-wrap"></div>
+  <!-- BOTTOM BAR -->
+  <div class="bot-bar">
+    <button class="next-btn" onclick="nextCall()">📞 Next Call</button>
+    <button class="add-btn" onclick="openAddModal()">+</button>
+  </div>
+</div>
+
+<!-- TRACKER TAB -->
+<div id="tab-tracker" style="display:none;">
+  <div class="search-row">
+    <input class="s-input" id="t-search" type="text" placeholder="Search leads..." oninput="renderTracker()">
+    <button class="f-btn" id="f-inprog" onclick="toggleTFilter('inprogress')">In Progress</button>
+    <button class="f-btn" id="f-closed" onclick="toggleTFilter('closed')">Closed</button>
+  </div>
+  <div id="tracker-list" class="leads-wrap" style="padding-bottom:20px;"></div>
+</div>
+
+<!-- TARGETS TAB -->
+<div id="tab-targets" style="display:none;">
+  <div class="targets-wrap" id="targets-wrap"></div>
+</div>
+
+<!-- ADD LEAD MODAL -->
+<div class="modal-overlay" id="add-modal" onclick="closeAddModal(event)">
+  <div class="modal">
+    <div class="modal-title">Add New Lead</div>
+    <div class="mf"><label>Business Name *</label><input type="text" id="n-biz" placeholder="Business name"></div>
+    <div class="mf"><label>Contact Person *</label><input type="text" id="n-name" placeholder="Contact name"></div>
+    <div class="mf"><label>Phone Number *</label><input type="tel" id="n-phone" placeholder="e.g. 0821234567"></div>
+    <div class="mf"><label>Email</label><input type="email" id="n-email" placeholder="Email address"></div>
+    <div class="mf"><label>Industry</label>
+      <select id="n-ind">
+        <option value="">Select</option>
+        <option>Retail</option><option>Manufacturing</option><option>Construction</option>
+        <option>Transport</option><option>Healthcare</option><option>Food & Beverage</option>
+        <option>Professional Services</option><option>Agriculture</option><option>Technology</option>
+        <option>Fuel & Energy</option><option>Other</option>
+      </select>
+    </div>
+    <div class="mf"><label>Funding Type</label>
+      <select id="n-fund">
+        <option value="">Select</option>
+        <option>Short-Term Loan</option><option>Bank Overdraft</option>
+        <option>Medium-Term Loan</option><option>Asset Finance</option>
+        <option>Oxbow</option><option>Diesel</option><option>Insurance</option>
+      </select>
+    </div>
+    <div class="mf"><label>Est. Amount (R)</label><input type="number" id="n-amt" placeholder="e.g. 500000"></div>
+    <div class="mf"><label>Assign Broker</label>
+      <select id="n-broker">
+        <option>Nathan</option><option>Angelo</option><option>Craig</option>
+        <option>Joshua</option><option>Cameron</option><option>Mohammed</option>
+      </select>
+    </div>
+    <div class="mf"><label>Notes</label><input type="text" id="n-notes" placeholder="Any notes"></div>
+    <div class="modal-btns">
+      <button class="m-cancel" onclick="closeAddModalDirect()">Cancel</button>
+      <button class="m-save" onclick="addLead()">Add Lead</button>
+    </div>
+  </div>
+</div>
+
+<!-- TARGET EDIT MODAL -->
+<div class="modal-overlay tgt-modal" id="tgt-modal" onclick="closeTgtModal(event)">
+  <div class="modal">
+    <div class="modal-title" id="tgt-modal-title">Update Target Progress</div>
+    <div class="mf"><label id="tgt-modal-lbl">Amount</label><input type="number" id="tgt-modal-val" placeholder="Enter current amount"></div>
+    <div class="modal-btns">
+      <button class="m-cancel" onclick="closeTgtModalDirect()">Cancel</button>
+      <button class="m-save" onclick="saveTgtVal()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// SHEET CONFIG
+// ═══════════════════════════════════════════════════════════
+const SHEET_ID = '1oRKCWPLDgbbI4URgoBCi_OD2vT_X64AHDN94A8hp_6c';
+const SHEET_NAME = 'Lead Tracker';
+
+// Column indices (0-based) from the sheet
+const COL = {
+  num: 0, biz: 1, contact: 2, phone: 3, notes: 4, email: 5,
+  industry: 6, fundType: 7, amount: 8, broker: 9, callDate: 10,
+  callStatus: 11, leadStatus: 12, followUp: 13, mandate: 14,
+  mandateSigned: 15, appSubmitted: 16, termSheet: 17, dealClosed: 18,
+  loanAmount: 19, feePct: 20, feeEarned: 21, city: 22
+};
+
+const BROKERS = ['Nathan','Angelo','Craig','Joshua','Cameron','Mohammed'];
+const CALL_STATUSES = ['Answered','Voicemail','No Answer','Interested','Declined','Wrong Number'];
+
+const TARGETS = [
+  { key:'oxbow',     label:'Oxbow',       target:100000,   format:'R',  color:'#3b82f6' },
+  { key:'shortterm', label:'Short Term',  target:1500000,  format:'R',  color:'#c9a84c' },
+  { key:'bank',      label:'Bank',        target:2000000,  format:'R',  color:'#8b5cf6' },
+  { key:'diesel',    label:'Diesel',      target:70000,    format:'L',  color:'#10b981' },
+  { key:'insurance', label:'Insurance',   target:20000,    format:'R',  color:'#ef4444' },
+];
+
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+let activeBroker = 'All';
+let activeTab = 'dialler';
+let diallerFilter = null;
+let trackerFilter = null;
+let tgtEditState = null;
+
+function getLeads() {
+  try { const s = localStorage.getItem('vlc_leads'); if(s) return JSON.parse(s); } catch(e) {}
+  return [];
+}
+function saveLeads(leads) {
+  try { localStorage.setItem('vlc_leads', JSON.stringify(leads)); } catch(e) {}
+}
+function getTargets() {
+  try { const s = localStorage.getItem('vlc_targets'); if(s) return JSON.parse(s); } catch(e) {}
+  const t = {};
+  BROKERS.forEach(b => { t[b] = {}; TARGETS.forEach(tg => { t[b][tg.key] = 0; }); });
+  return t;
+}
+function saveTargets(t) {
+  try { localStorage.setItem('vlc_targets', JSON.stringify(t)); } catch(e) {}
+}
+
+// ═══════════════════════════════════════════════════════════
+// SYNC FROM GOOGLE SHEETS
+// ═══════════════════════════════════════════════════════════
+async function syncSheet() {
+  const btn = document.querySelector('.sync-btn');
+  btn.textContent = '⟳ Syncing...';
+  try {
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
+    const res = await fetch(url);
+    const text = await res.text();
+    const json = JSON.parse(text.substring(47).slice(0,-2));
+    const rows = json.table.rows;
+
+    const existing = getLeads();
+    const existingMap = {};
+    existing.forEach(l => { if(l.sheetRow) existingMap[l.sheetRow] = l; });
+
+    const leads = [];
+    rows.forEach((row, idx) => {
+      if(idx < 1) return; // skip header rows (first data row is row index 1 in gviz after skipping 4 header rows)
+      const cells = row.c || [];
+      const get = (i) => cells[i] && cells[i].v != null ? String(cells[i].v).trim() : '';
+      const num = get(COL.num);
+      if(!num && !get(COL.biz)) return;
+
+      const rowKey = idx;
+      const existing_lead = existingMap[rowKey];
+
+      leads.push({
+        id: existing_lead ? existing_lead.id : Date.now() + idx,
+        sheetRow: rowKey,
+        num: num,
+        biz: get(COL.biz),
+        contact: get(COL.contact),
+        phone: get(COL.phone),
+        notes: get(COL.notes),
+        email: get(COL.email),
+        industry: get(COL.industry),
+        fundType: get(COL.fundType),
+        amount: get(COL.amount),
+        broker: get(COL.broker),
+        callDate: get(COL.callDate),
+        callStatus: existing_lead ? existing_lead.callStatus : get(COL.callStatus),
+        leadStatus: get(COL.leadStatus),
+        followUp: get(COL.followUp),
+        mandate: get(COL.mandate),
+        mandateSigned: get(COL.mandateSigned),
+        appSubmitted: get(COL.appSubmitted),
+        termSheet: get(COL.termSheet),
+        dealClosed: get(COL.dealClosed),
+        loanAmount: get(COL.loanAmount),
+        feeEarned: get(COL.feeEarned),
+        city: get(COL.city),
+        diallerNotes: existing_lead ? (existing_lead.diallerNotes||'') : '',
+      });
+    });
+
+    saveLeads(leads);
+    btn.textContent = '✓ Synced';
+    setTimeout(() => btn.textContent = '⟳ Sync Sheet', 2000);
+    renderAll();
+  } catch(e) {
+    btn.textContent = '✗ Retry';
+    setTimeout(() => btn.textContent = '⟳ Sync Sheet', 3000);
+    console.error(e);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// TAB + BROKER
+// ═══════════════════════════════════════════════════════════
+function switchTab(tab, btn) {
+  activeTab = tab;
+  ['dialler','tracker','targets'].forEach(t => {
+    document.getElementById('tab-'+t).style.display = t===tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAll();
+}
+
+function setBroker(broker, btn) {
+  activeBroker = broker;
+  document.querySelectorAll('.b-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAll();
+}
+
+function toggleFilter(f) {
+  diallerFilter = diallerFilter === f ? null : f;
+  document.getElementById('f-uncalled').classList.toggle('active', diallerFilter==='uncalled');
+  document.getElementById('f-callback').classList.toggle('active', diallerFilter==='callback');
+  renderDialler();
+}
+
+function toggleTFilter(f) {
+  trackerFilter = trackerFilter === f ? null : f;
+  document.getElementById('f-inprog').classList.toggle('active', trackerFilter==='inprogress');
+  document.getElementById('f-closed').classList.toggle('active', trackerFilter==='closed');
+  renderTracker();
+}
+
+function filterLeads(forDialler) {
+  const leads = getLeads();
+  const q = document.getElementById(forDialler ? 'd-search' : 't-search').value.toLowerCase();
+  return leads.filter(l => {
+    const broker = l.broker ? l.broker.trim() : '';
+    if(activeBroker !== 'All' && broker.toLowerCase() !== activeBroker.toLowerCase()) return false;
+    if(q && !l.biz.toLowerCase().includes(q) && !l.contact.toLowerCase().includes(q) && !l.phone.includes(q)) return false;
+    if(forDialler) {
+      if(diallerFilter === 'uncalled') return !l.callStatus || l.callStatus === '';
+      if(diallerFilter === 'callback') return l.callStatus === 'Interested' || l.followUp;
+    } else {
+      if(trackerFilter === 'inprogress') return l.leadStatus === 'In Progress' || l.mandate === 'Yes' || l.mandate === 'Sent - Both';
+      if(trackerFilter === 'closed') return l.dealClosed === 'Yes';
+    }
+    return true;
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// RENDER DIALLER
+// ═══════════════════════════════════════════════════════════
+function renderDialler() {
+  const all = getLeads().filter(l => activeBroker==='All' || (l.broker||'').toLowerCase()===activeBroker.toLowerCase());
+  const filtered = filterLeads(true);
+
+  const answered = all.filter(l => l.callStatus && l.callStatus !== '').length;
+  const hot = all.filter(l => l.callStatus==='Interested' || l.callStatus==='Answered').length;
+  const vm  = all.filter(l => l.callStatus==='Voicemail').length;
+  const left = all.filter(l => !l.callStatus || l.callStatus==='').length;
+
+  document.getElementById('s-total').textContent = all.length;
+  document.getElementById('s-left').textContent  = left;
+  document.getElementById('s-ans').textContent   = answered;
+  document.getElementById('s-int').textContent   = hot;
+  document.getElementById('s-vm').textContent    = vm;
+
+  const container = document.getElementById('dialler-list');
+  if(!filtered.length) { container.innerHTML = '<div class="empty">No leads. Tap + to add or sync your sheet.</div>'; return; }
+
+  const uncalled  = filtered.filter(l => !l.callStatus || l.callStatus==='');
+  const hot_leads = filtered.filter(l => l.callStatus==='Interested');
+  const rest      = filtered.filter(l => l.callStatus && l.callStatus!=='' && l.callStatus!=='Interested');
+
+  let html = '';
+  if(uncalled.length)  { html += `<div class="sec-lbl">To Call (${uncalled.length})</div>`; uncalled.forEach(l => html += diallerCard(l)); }
+  if(hot_leads.length) { html += `<div class="sec-lbl">Hot Leads (${hot_leads.length})</div>`; hot_leads.forEach(l => html += diallerCard(l)); }
+  if(rest.length && !diallerFilter) { html += `<div class="sec-lbl">Called (${rest.length})</div>`; rest.forEach(l => html += diallerCard(l)); }
+  container.innerHTML = html;
+}
+
+function diallerCard(l) {
+  const status = (l.callStatus||'').toLowerCase().replace(' ','-');
+  const statuses = [
+    {key:'Answered',css:'ob-ans'},{key:'Voicemail',css:'ob-vm'},
+    {key:'No Answer',css:'ob-na'},{key:'Interested',css:'ob-int'},
+    {key:'Declined',css:'ob-dec'},{key:'Wrong Number',css:'ob-wn'}
+  ];
+  const btns = statuses.map(s =>
+    `<button class="ob ${s.css} ${l.callStatus===s.key?'sel':''}" onclick="setStatus(${l.id},'${s.key}')">${s.key}</button>`
+  ).join('');
+
+  const amtTag  = l.amount   ? `<span class="tag tg-amt">R ${Number(l.amount.replace(/[^0-9.]/g,'')||0).toLocaleString('en-ZA')}</span>` : '';
+  const indTag  = l.industry ? `<span class="tag tg-ind">${l.industry}</span>` : '';
+  const statTag = !l.callStatus || l.callStatus===''
+    ? `<span class="tag tg-new">New</span>`
+    : l.callStatus==='Interested' ? `<span class="tag tg-hot">Hot</span>`
+    : l.callStatus==='Answered'   ? `<span class="tag tg-prog">Answered</span>` : '';
+  const fundTag = l.fundType ? `<span class="tag tg-fund">${l.fundType}</span>` : '';
+
+  return `
+  <div class="card ${status}" id="dcard-${l.id}">
+    <div class="card-top">
+      <div class="card-info">
+        <div class="card-name">${l.biz||l.contact}</div>
+        <div class="card-biz">${l.contact}${l.city?' · '+l.city:''}</div>
+        <div class="card-tags">${statTag}${indTag}${amtTag}${fundTag}</div>
+      </div>
+      <a class="call-btn" href="tel:${l.phone}">📞 Call</a>
+    </div>
+    <div class="out-bar">${btns}</div>
+    <div class="notes-row">
+      <textarea class="notes-in" rows="1" placeholder="Call notes..." onchange="saveDiallerNote(${l.id},this.value)">${l.diallerNotes||''}</textarea>
+    </div>
+  </div>`;
+}
+
+function setStatus(id, status) {
+  const leads = getLeads();
+  const lead = leads.find(l => l.id===id);
+  if(lead) {
+    lead.callStatus = lead.callStatus===status ? '' : status;
+    saveLeads(leads);
+    renderDialler();
+  }
+}
+
+function saveDiallerNote(id, note) {
+  const leads = getLeads();
+  const lead = leads.find(l => l.id===id);
+  if(lead) { lead.diallerNotes = note; saveLeads(leads); }
+}
+
+function nextCall() {
+  const all = getLeads();
+  const uncalled = all.filter(l => {
+    if(activeBroker!=='All' && (l.broker||'').toLowerCase()!==activeBroker.toLowerCase()) return false;
+    return !l.callStatus || l.callStatus==='';
+  });
+  if(!uncalled.length) { alert('No uncalled leads. Add leads or sync your sheet.'); return; }
+  const lead = uncalled[0];
+  const card = document.getElementById('dcard-'+lead.id);
+  if(card) card.scrollIntoView({behavior:'smooth',block:'center'});
+  window.location.href = 'tel:'+lead.phone;
+}
+
+// ═══════════════════════════════════════════════════════════
+// RENDER TRACKER
+// ═══════════════════════════════════════════════════════════
+function renderTracker() {
+  const filtered = filterLeads(false);
+  const container = document.getElementById('tracker-list');
+  if(!filtered.length) { container.innerHTML = '<div class="empty">No leads found. Sync your sheet.</div>'; return; }
+
+  let html = '';
+  filtered.forEach(l => {
+    const pipeline = [
+      { lbl:'Mandate', val: l.mandate||'No', ok: l.mandate&&l.mandate!=='No' },
+      { lbl:'Signed',  val: l.mandateSigned||'No', ok: l.mandateSigned==='Yes' },
+      { lbl:'App',     val: l.appSubmitted||'No',  ok: l.appSubmitted==='Yes' },
+      { lbl:'Sheet',   val: l.termSheet||'No',     ok: l.termSheet==='Yes' },
+      { lbl:'Closed',  val: l.dealClosed||'No',    ok: l.dealClosed==='Yes' },
+    ];
+    const pipeHtml = pipeline.map(p =>
+      `<div class="pipe-item"><div class="pipe-dot" style="background:${p.ok?'#10b981':'#2a2a4e'}"></div><div class="pipe-lbl">${p.lbl}</div><div class="pipe-val">${p.val}</div></div>`
+    ).join('');
+    const statusColor = l.dealClosed==='Yes' ? '#10b981' : l.leadStatus==='In Progress' ? '#c9a84c' : l.leadStatus==='Declined' ? '#ef4444' : '#6b7280';
+    html += `
+    <div class="card" style="border-left:4px solid ${statusColor}">
+      <div class="card-top">
+        <div class="card-info">
+          <div class="card-name">${l.biz}</div>
+          <div class="card-biz">${l.contact} · ${l.phone}</div>
+          <div class="card-tags">
+            ${l.broker?`<span class="tag tg-prog">${l.broker}</span>`:''}
+            ${l.industry?`<span class="tag tg-ind">${l.industry}</span>`:''}
+            ${l.fundType?`<span class="tag tg-fund">${l.fundType}</span>`:''}
+            ${l.amount?`<span class="tag tg-amt">R ${l.amount}</span>`:''}
+          </div>
+        </div>
+        <a class="call-btn" href="tel:${l.phone}" style="background:#3b82f6">📞</a>
+      </div>
+      <div class="pipe-row">${pipeHtml}</div>
+      ${l.notes||l.city?`<div class="notes-row"><div style="font-size:.75rem;color:#a0a0b8;padding:0 0 8px">${l.notes||''} ${l.city?'· '+l.city:''}</div></div>`:''}
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════════
+// RENDER TARGETS
+// ═══════════════════════════════════════════════════════════
+function renderTargets() {
+  const tgts = getTargets();
+  const brokers = activeBroker==='All' ? BROKERS : [activeBroker];
+  let html = '';
+
+  brokers.forEach(broker => {
+    const scores = TARGETS.map(t => Math.min(100, Math.round(((tgts[broker]||{})[t.key]||0) / t.target * 100)));
+    const avg = Math.round(scores.reduce((a,b)=>a+b,0)/scores.length);
+    const emoji = avg>=100?'🏆':avg>=70?'💪':avg>=40?'⚡':'🔥';
+
+    let rows = TARGETS.map((t,i) => {
+      const val = (tgts[broker]||{})[t.key]||0;
+      const p = scores[i];
+      const barColor = p>=100?'#10b981':p>=70?'#c9a84c':p>=40?'#f97316':'#ef4444';
+      const valFmt = t.format==='R' ? `R ${Number(val).toLocaleString('en-ZA')}` : `${Number(val).toLocaleString('en-ZA')}L`;
+      const tgtFmt = t.format==='R' ? `R ${t.target.toLocaleString('en-ZA')}` : `${t.target.toLocaleString('en-ZA')}L`;
+      return `
+      <div class="tgt-row">
+        <div class="tgt-lbl">${t.label}</div>
+        <div style="flex:1;min-width:0">
+          <div class="tgt-bar-wrap"><div class="tgt-bar" style="width:${p}%;background:${barColor}"></div></div>
+          <div style="font-size:.62rem;color:#a0a0b8;margin-top:2px">${valFmt} of ${tgtFmt}</div>
+        </div>
+        <div class="tgt-pct" style="color:${barColor}">${p}%</div>
+        <button class="tgt-edit" onclick="openTgtEdit('${broker}','${t.key}','${t.label}',${val})">Edit</button>
+      </div>`;
+    }).join('');
+
+    html += `
+    <div class="tgt-card">
+      <div class="tgt-header">
+        <div class="tgt-broker">${emoji} ${broker}</div>
+        <div class="tgt-score">${avg}%</div>
+      </div>
+      ${rows}
+    </div>`;
+  });
+  document.getElementById('targets-wrap').innerHTML = html;
+}
+
+function openTgtEdit(broker, key, label, current) {
+  tgtEditState = {broker, key};
+  document.getElementById('tgt-modal-title').textContent = `Update ${broker} — ${label}`;
+  document.getElementById('tgt-modal-lbl').textContent = label;
+  document.getElementById('tgt-modal-val').value = current||0;
+  document.getElementById('tgt-modal').classList.add('open');
+}
+function closeTgtModal(e) { if(e.target===document.getElementById('tgt-modal')) closeTgtModalDirect(); }
+function closeTgtModalDirect() { document.getElementById('tgt-modal').classList.remove('open'); tgtEditState=null; }
+function saveTgtVal() {
+  if(!tgtEditState) return;
+  const val = parseFloat(document.getElementById('tgt-modal-val').value)||0;
+  const t = getTargets();
+  if(!t[tgtEditState.broker]) t[tgtEditState.broker]={};
+  t[tgtEditState.broker][tgtEditState.key] = val;
+  saveTargets(t);
+  closeTgtModalDirect();
+  renderTargets();
+}
+
+// ═══════════════════════════════════════════════════════════
+// ADD LEAD
+// ═══════════════════════════════════════════════════════════
+function openAddModal() { document.getElementById('add-modal').classList.add('open'); document.getElementById('n-biz').focus(); }
+function closeAddModal(e) { if(e.target===document.getElementById('add-modal')) closeAddModalDirect(); }
+function closeAddModalDirect() {
+  document.getElementById('add-modal').classList.remove('open');
+  ['n-biz','n-name','n-phone','n-email','n-amt','n-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('n-ind').value='';
+  document.getElementById('n-fund').value='';
+}
+function addLead() {
+  const biz = document.getElementById('n-biz').value.trim();
+  const phone = document.getElementById('n-phone').value.trim();
+  if(!biz||!phone) { alert('Business name and phone are required.'); return; }
+  const leads = getLeads();
+  leads.unshift({
+    id: Date.now(), sheetRow: null,
+    biz, contact: document.getElementById('n-name').value.trim(),
+    phone, email: document.getElementById('n-email').value.trim(),
+    industry: document.getElementById('n-ind').value,
+    fundType: document.getElementById('n-fund').value,
+    amount: document.getElementById('n-amt').value||'',
+    broker: document.getElementById('n-broker').value,
+    notes: document.getElementById('n-notes').value.trim(),
+    callStatus:'', leadStatus:'New', mandate:'No', mandateSigned:'No',
+    appSubmitted:'No', termSheet:'No', dealClosed:'No',
+    loanAmount:'', feeEarned:'', city:'', diallerNotes:''
+  });
+  saveLeads(leads);
+  closeAddModalDirect();
+  renderAll();
+}
+
+// ═══════════════════════════════════════════════════════════
+// RENDER ALL
+// ═══════════════════════════════════════════════════════════
+function renderAll() {
+  if(activeTab==='dialler') renderDialler();
+  if(activeTab==='tracker') renderTracker();
+  if(activeTab==='targets') renderTargets();
+}
+
+// ── INIT ──
+syncSheet();
+</script>
+</body>
+</html>
