@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>VLC Command Centre</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body { width:100%; overflow-x:hidden; font-family:'Segoe UI',Arial,sans-serif; background:#0f0f1e; color:#fff; min-height:100vh; }
+.hdr { background:#1a1a2e; padding:12px 14px; display:flex; align-items:center; justify-content:space-between; border-bottom:2px solid #c9a84c; position:sticky; top:0; z-index:200; }
+.logo { font-size:.9rem; font-weight:900; color:#fff; text-transform:uppercase; letter-spacing:1px; }
+.logo span { color:#c9a84c; }
+.hdr-btns { display:flex; gap:6px; }
+.sync-btn { background:#c9a84c; color:#1a1a2e; border:none; border-radius:20px; padding:6px 12px; font-size:.68rem; font-weight:800; cursor:pointer; white-space:nowrap; }
+.setup-btn { background:#2a2a4e; color:#a0a0b8; border:none; border-radius:20px; padding:6px 10px; font-size:.65rem; font-weight:700; cursor:pointer; white-space:nowrap; }
+.nav { background:#1a1a2e; display:flex; border-bottom:2px solid #2a2a4e; overflow-x:auto; }
+.nav::-webkit-scrollbar { display:none; }
+.nav-btn { padding:11px 18px; border:none; background:transparent; color:#a0a0b8; font-size:.8rem; font-weight:700; cursor:pointer; white-space:nowrap; border-bottom:3px solid transparent; flex-shrink:0; }
+.nav-btn.active { color:#c9a84c; border-bottom-color:#c9a84c; }
+.broker-bar { background:#141428; padding:8px 14px; display:flex; gap:6px; overflow-x:auto; border-bottom:1px solid #2a2a4e; }
+.broker-bar::-webkit-scrollbar { display:none; }
+.b-btn { background:#2a2a4e; color:#a0a0b8; border:none; border-radius:20px; padding:6px 14px; font-size:.75rem; font-weight:600; cursor:pointer; white-space:nowrap; flex-shrink:0; }
+.b-btn.active { background:#c9a84c; color:#1a1a2e; }
+.conn-bar { padding:6px 14px; font-size:.68rem; font-weight:700; display:flex; align-items:center; gap:6px; }
+.conn-dot { width:7px; height:7px; border-radius:50%; }
+.conn-bar.connected { background:#0d2818; color:#10b981; }
+.conn-bar.connected .conn-dot { background:#10b981; }
+.conn-bar.disconnected { background:#3a1010; color:#f87171; }
+.conn-bar.disconnected .conn-dot { background:#ef4444; }
+.stats { background:#1a1a2e; display:flex; border-bottom:1px solid #2a2a4e; }
+.stat { flex:1; text-align:center; padding:8px 4px; }
+.stat-n { font-size:1.05rem; font-weight:900; color:#c9a84c; }
+.stat-l { font-size:.52rem; color:#a0a0b8; text-transform:uppercase; letter-spacing:.5px; margin-top:1px; }
+.stat-d { width:1px; background:#2a2a4e; }
+.search-row { padding:10px 12px; background:#0f0f1e; display:flex; gap:6px; }
+.s-input { flex:1; min-width:0; background:#1a1a2e; border:1px solid #2a2a4e; border-radius:8px; padding:9px 12px; color:#fff; font-size:.82rem; outline:none; }
+.s-input:focus { border-color:#c9a84c; }
+.s-input::placeholder { color:#4a4a6e; }
+.f-btn { background:#1a1a2e; border:1px solid #2a2a4e; border-radius:8px; padding:9px 10px; color:#c9a84c; font-size:.7rem; font-weight:700; cursor:pointer; white-space:nowrap; flex-shrink:0; }
+.f-btn.active { background:#c9a84c; color:#1a1a2e; border-color:#c9a84c; }
+.sec-lbl { font-size:.62rem; font-weight:700; color:#4a4a6e; text-transform:uppercase; letter-spacing:2px; padding:10px 14px 4px; }
+.leads-wrap { padding:0 12px 110px; }
+.card { background:#1a1a2e; border-radius:10px; margin-bottom:10px; overflow:hidden; border:1px solid #2a2a4e; width:100%; }
+.card.answered    { border-left:4px solid #10b981; }
+.card.voicemail   { border-left:4px solid #6b7280; }
+.card.no-answer   { border-left:4px solid #f97316; }
+.card.interested  { border-left:4px solid #3b82f6; }
+.card.declined    { border-left:4px solid #ef4444; opacity:.65; }
+.card.wrong-number{ border-left:4px solid #ef4444; opacity:.5; }
+.card-top { padding:12px 12px 8px; display:flex; align-items:center; gap:8px; }
+.card-info { flex:1; min-width:0; }
+.card-name { font-size:.9rem; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; align-items:center; gap:5px; }
+.card-sub  { font-size:.73rem; color:#a0a0b8; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:1px; }
+.card-tags { display:flex; gap:4px; margin-top:5px; flex-wrap:wrap; }
+.tag { font-size:.58rem; font-weight:700; padding:2px 7px; border-radius:10px; text-transform:uppercase; white-space:nowrap; }
+.tg-ind  { background:#2a2a4e; color:#a0a0b8; }
+.tg-amt  { background:#1e3a2e; color:#10b981; }
+.tg-new  { background:#1e2a4e; color:#60a5fa; }
+.tg-prog { background:#3a2a10; color:#c9a84c; }
+.tg-hot  { background:#1e3a5e; color:#60a5fa; }
+.tg-fund { background:#1e3a2e; color:#10b981; }
+.sync-pill { font-size:.55rem; padding:1px 5px; border-radius:8px; background:#3a2a10; color:#c9a84c; }
+.sync-pill.ok { background:#0d2818; color:#10b981; }
+.call-btn { background:#10b981; border:none; border-radius:50px; padding:10px 14px; color:#fff; font-size:.78rem; font-weight:800; display:flex; align-items:center; gap:4px; flex-shrink:0; white-space:nowrap; cursor:pointer; }
+.call-btn:active { opacity:.8; }
+.call-popup { display:none; background:#0d1829; border-top:1px solid #2a2a4e; border-bottom:1px solid #2a2a4e; padding:14px 14px 12px; }
+.call-popup.open { display:block; }
+.cp-label { font-size:.65rem; font-weight:700; color:#c9a84c; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }
+.cp-number { font-size:1.4rem; font-weight:900; color:#fff; letter-spacing:2px; margin-bottom:10px; }
+.cp-btns { display:flex; gap:8px; flex-wrap:wrap; }
+.cp-dial { flex:1; min-width:100px; background:#10b981; color:#fff; border:none; border-radius:8px; padding:11px; font-size:.85rem; font-weight:800; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer; }
+.cp-dial:active { opacity:.8; }
+.cp-copy { background:#2a2a4e; color:#c9a84c; border:none; border-radius:8px; padding:11px 16px; font-size:.82rem; font-weight:700; cursor:pointer; white-space:nowrap; }
+.cp-copy.copied { background:#10b981; color:#fff; }
+.cp-close { background:transparent; color:#6b7280; border:1px solid #2a2a4e; border-radius:8px; padding:11px 12px; font-size:.82rem; cursor:pointer; }
+.out-bar { padding:7px 12px; background:#141428; display:flex; gap:5px; flex-wrap:wrap; border-top:1px solid #2a2a4e; }
+.ob { border:none; border-radius:16px; padding:5px 10px; font-size:.65rem; font-weight:700; cursor:pointer; white-space:nowrap; text-transform:uppercase; }
+.ob:active { opacity:.8; }
+.ob-ans { background:#1e3a2e; color:#10b981; } .ob-ans.sel { background:#10b981; color:#fff; }
+.ob-vm  { background:#2a2a4e; color:#a0a0b8; } .ob-vm.sel  { background:#6b7280; color:#fff; }
+.ob-na  { background:#3a2010; color:#f97316; } .ob-na.sel  { background:#f97316; color:#fff; }
+.ob-int { background:#1e2a4e; color:#60a5fa; } .ob-int.sel { background:#3b82f6; color:#fff; }
+.ob-dec { background:#3a1010; color:#f87171; } .ob-dec.sel { background:#ef4444; color:#fff; }
+.ob-wn  { background:#3a1010; color:#f87171; } .ob-wn.sel  { background:#9b2c2c; color:#fff; }
+.notes-row { padding:0 12px 10px; }
+.notes-in  { width:100%; background:#0f0f1e; border:1px solid #2a2a4e; border-radius:6px; padding:7px 10px; color:#fff; font-size:.78rem; resize:none; outline:none; font-family:inherit; }
+.notes-in:focus { border-color:#c9a84c; }
+.notes-in::placeholder { color:#4a4a6e; }
+.pipe-row { padding:6px 12px 10px; display:flex; gap:6px; flex-wrap:wrap; }
+.pipe-item { display:flex; align-items:center; gap:3px; font-size:.62rem; }
+.pipe-dot  { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.bot-bar { position:fixed; bottom:0; left:0; right:0; background:#1a1a2e; border-top:2px solid #c9a84c; padding:10px 12px; display:flex; gap:8px; z-index:150; }
+.next-btn { flex:1; background:#10b981; color:#fff; border:none; border-radius:8px; padding:13px; font-size:.9rem; font-weight:800; cursor:pointer; }
+.next-btn:active { opacity:.8; }
+.add-btn  { background:#c9a84c; color:#1a1a2e; border:none; border-radius:8px; padding:13px 16px; font-size:1.1rem; font-weight:900; cursor:pointer; }
+.targets-wrap { padding:12px 12px 80px; }
+.tgt-card { background:#1a1a2e; border-radius:10px; padding:16px; margin-bottom:12px; border-left:4px solid #c9a84c; }
+.tgt-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.tgt-broker { font-size:1rem; font-weight:800; }
+.tgt-score  { font-size:1.2rem; font-weight:900; color:#c9a84c; }
+.tgt-row    { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.tgt-lbl    { font-size:.7rem; color:#a0a0b8; width:76px; flex-shrink:0; text-transform:uppercase; }
+.tgt-bar-wrap { flex:1; background:#2a2a4e; border-radius:6px; height:8px; overflow:hidden; }
+.tgt-bar    { height:100%; border-radius:6px; transition:width .4s; }
+.tgt-pct    { font-size:.7rem; font-weight:700; width:34px; text-align:right; flex-shrink:0; }
+.tgt-edit   { background:#2a2a4e; border:none; border-radius:6px; padding:5px 10px; color:#c9a84c; font-size:.68rem; font-weight:700; cursor:pointer; flex-shrink:0; }
+.modal-ov { position:fixed; inset:0; background:rgba(0,0,0,.8); z-index:400; display:none; align-items:flex-end; }
+.modal-ov.open { display:flex; }
+.modal { background:#1a1a2e; border-radius:16px 16px 0 0; padding:18px 16px 28px; width:100%; max-height:92vh; overflow-y:auto; border-top:3px solid #c9a84c; }
+.modal-title { font-size:.95rem; font-weight:800; margin-bottom:12px; }
+.mf { margin-bottom:10px; }
+.mf label { display:block; font-size:.65rem; font-weight:700; color:#c9a84c; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px; }
+.mf input,.mf select,.mf textarea { width:100%; background:#0f0f1e; border:1px solid #2a2a4e; border-radius:8px; padding:10px 12px; color:#fff; font-size:.85rem; outline:none; font-family:inherit; }
+.mf input:focus,.mf select:focus,.mf textarea:focus { border-color:#c9a84c; }
+.mf select option { background:#1a1a2e; }
+.modal-btns { display:flex; gap:8px; margin-top:12px; }
+.m-save   { flex:1; background:#c9a84c; color:#1a1a2e; border:none; border-radius:8px; padding:12px; font-weight:800; font-size:.88rem; cursor:pointer; }
+.m-cancel { background:#2a2a4e; color:#a0a0b8; border:none; border-radius:8px; padding:12px 16px; font-weight:700; cursor:pointer; }
+.import-instructions { background:#0f0f1e; border-radius:8px; padding:12px; margin-bottom:12px; font-size:.8rem; color:#a0a0b8; line-height:1.6; }
+.import-instructions b { color:#c9a84c; }
+.toast { position:fixed; top:70px; left:50%; transform:translateX(-50%); background:#10b981; color:#fff; padding:8px 20px; border-radius:20px; font-size:.8rem; font-weight:700; z-index:600; opacity:0; transition:opacity .3s; pointer-events:none; white-space:nowrap; max-width:90%; text-align:center; }
+.toast.show { opacity:1; }
+.empty { text-align:center; padding:50px 20px; color:#4a4a6e; font-size:.9rem; line-height:1.6; }
+.step-num { background:#c9a84c; color:#1a1a2e; width:20px; height:20px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:.7rem; font-weight:900; margin-right:6px; flex-shrink:0; }
+.step-row { display:flex; align-items:flex-start; margin-bottom:10px; font-size:.82rem; color:#a0a0b8; line-height:1.5; }
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="logo">Vital Link <span>Capital</span></div>
+  <div class="hdr-btns">
+    <button class="setup-btn" onclick="openSetupModal()">⚙ Setup Sync</button>
+    <button class="sync-btn" onclick="openImportModal()">⬆ Import</button>
+  </div>
+</div>
+
+<div class="nav">
+  <button class="nav-btn active" onclick="switchTab('dialler',this)">📞 Dialler</button>
+  <button class="nav-btn" onclick="switchTab('tracker',this)">📋 Tracker</button>
+  <button class="nav-btn" onclick="switchTab('targets',this)">🎯 Targets</button>
+</div>
+
+<div class="broker-bar">
+  <button class="b-btn active" onclick="setBroker('All',this)">All</button>
+  <button class="b-btn" onclick="setBroker('Nathan',this)">Nathan</button>
+  <button class="b-btn" onclick="setBroker('Angelo',this)">Angelo</button>
+  <button class="b-btn" onclick="setBroker('Craig',this)">Craig</button>
+  <button class="b-btn" onclick="setBroker('Joshua',this)">Joshua</button>
+  <button class="b-btn" onclick="setBroker('Cameron',this)">Cameron</button>
+  <button class="b-btn" onclick="setBroker('Mohammed',this)">Mohammed</button>
+</div>
+
+<div id="conn-bar" class="conn-bar disconnected">
+  <div class="conn-dot"></div>
+  <span id="conn-text">Not connected to sheet — tap Setup Sync to enable auto-update</span>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div id="tab-dialler">
+  <div class="stats">
+    <div class="stat"><div class="stat-n" id="s-total">0</div><div class="stat-l">Total</div></div>
+    <div class="stat-d"></div>
+    <div class="stat"><div class="stat-n" id="s-left">0</div><div class="stat-l">Left</div></div>
+    <div class="stat-d"></div>
+    <div class="stat"><div class="stat-n" id="s-ans">0</div><div class="stat-l">Answered</div></div>
+    <div class="stat-d"></div>
+    <div class="stat"><div class="stat-n" id="s-int">0</div><div class="stat-l">Hot</div></div>
+    <div class="stat-d"></div>
+    <div class="stat"><div class="stat-n" id="s-vm">0</div><div class="stat-l">VM</div></div>
+  </div>
+  <div class="search-row">
+    <input class="s-input" id="d-search" type="text" placeholder="Search name, business, number..." oninput="renderDialler()">
+    <button class="f-btn" id="f-uncalled" onclick="toggleFilter('uncalled')">Uncalled</button>
+    <button class="f-btn" id="f-hot" onclick="toggleFilter('hot')">Hot</button>
+  </div>
+  <div id="dialler-list" class="leads-wrap"></div>
+  <div class="bot-bar">
+    <button class="next-btn" onclick="nextCall()">📞 Next Call</button>
+    <button class="add-btn" onclick="openAddModal()">+</button>
+  </div>
+</div>
+
+<div id="tab-tracker" style="display:none;">
+  <div class="search-row">
+    <input class="s-input" id="t-search" type="text" placeholder="Search leads..." oninput="renderTracker()">
+    <button class="f-btn" id="f-inprog" onclick="toggleTFilter('inprogress')">In Progress</button>
+    <button class="f-btn" id="f-closed" onclick="toggleTFilter('closed')">Closed</button>
+  </div>
+  <div id="tracker-list" class="leads-wrap" style="padding-bottom:20px;"></div>
+</div>
+
+<div id="tab-targets" style="display:none;">
+  <div class="targets-wrap" id="targets-wrap"></div>
+</div>
+
+<!-- SETUP SYNC MODAL -->
+<div class="modal-ov" id="setup-modal" onclick="closeModalOv('setup-modal',event)">
+  <div class="modal">
+    <div class="modal-title">Connect to Google Sheet</div>
+    <div class="import-instructions">
+      This connects the dialler directly to your Lead Tracker sheet. Once connected, marking a call status or adding notes updates the sheet automatically — no manual copying needed.
+    </div>
+    <div class="step-row"><span class="step-num">1</span> Open the Apps Script file provided to you (VLC-AppsScript-Sync.gs)</div>
+    <div class="step-row"><span class="step-num">2</span> Open your Google Sheet, click Extensions → Apps Script</div>
+    <div class="step-row"><span class="step-num">3</span> Paste the script code, save, then click Deploy → New deployment → Web app</div>
+    <div class="step-row"><span class="step-num">4</span> Set "Who has access" to Anyone, click Deploy, authorize</div>
+    <div class="step-row"><span class="step-num">5</span> Copy the Web App URL it gives you and paste it below</div>
+    <div class="mf" style="margin-top:14px;">
+      <label>Web App URL</label>
+      <input type="text" id="script-url" placeholder="https://script.google.com/macros/s/.../exec">
+    </div>
+    <div class="modal-btns">
+      <button class="m-cancel" onclick="closeModalOv('setup-modal',{target:null})">Cancel</button>
+      <button class="m-save" onclick="saveScriptUrl()">Connect</button>
+    </div>
+  </div>
+</div>
+
+<!-- IMPORT MODAL -->
+<div class="modal-ov" id="import-modal" onclick="closeModalOv('import-modal',event)">
+  <div class="modal">
+    <div class="modal-title">Import from Google Sheet</div>
+    <div class="import-instructions">
+      <b>If connected to sync:</b> Tap "Pull from Sheet" to load leads automatically.<br><br>
+      <b>If not connected:</b> Copy your sheet data (select all, copy) and paste below.
+    </div>
+    <button class="m-save" style="margin-bottom:12px;" onclick="pullFromScript()">⬇ Pull from Sheet (if connected)</button>
+    <div class="mf">
+      <label>Or Paste Sheet Data Here</label>
+      <textarea id="import-data" rows="5" placeholder="Paste copied data from Google Sheet here..."></textarea>
+    </div>
+    <div class="modal-btns">
+      <button class="m-cancel" onclick="closeImportModal()">Cancel</button>
+      <button class="m-save" onclick="importData()">Import Pasted Data</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD LEAD MODAL -->
+<div class="modal-ov" id="add-modal" onclick="closeModalOv('add-modal',event)">
+  <div class="modal">
+    <div class="modal-title">Add New Lead</div>
+    <div class="mf"><label>Business Name *</label><input type="text" id="n-biz" placeholder="Business name"></div>
+    <div class="mf"><label>Contact Person *</label><input type="text" id="n-name" placeholder="Contact name"></div>
+    <div class="mf"><label>Phone Number *</label><input type="tel" id="n-phone" placeholder="e.g. 0821234567"></div>
+    <div class="mf"><label>Industry</label>
+      <select id="n-ind">
+        <option value="">Select</option>
+        <option>Retail</option><option>Manufacturing</option><option>Construction</option>
+        <option>Transport & Logistics</option><option>Healthcare</option><option>Food & Beverage</option>
+        <option>Professional Services</option><option>Agriculture</option><option>Technology</option>
+        <option>Fuel & Energy</option><option>Other</option>
+      </select>
+    </div>
+    <div class="mf"><label>Funding Type</label>
+      <select id="n-fund">
+        <option value="">Select</option>
+        <option>Short-Term Loan</option><option>Bank Overdraft</option>
+        <option>Medium-Term Loan</option><option>Asset Finance</option>
+        <option>Oxbow</option><option>Diesel</option><option>Insurance</option>
+      </select>
+    </div>
+    <div class="mf"><label>Est. Amount (R)</label><input type="number" id="n-amt" placeholder="e.g. 500000"></div>
+    <div class="mf"><label>Assign Broker</label>
+      <select id="n-broker">
+        <option>Nathan</option><option>Angelo</option><option>Craig</option>
+        <option>Joshua</option><option>Cameron</option><option>Mohammed</option>
+      </select>
+    </div>
+    <div class="mf"><label>Notes</label><input type="text" id="n-notes" placeholder="Any notes"></div>
+    <div class="modal-btns">
+      <button class="m-cancel" onclick="closeModalOv('add-modal',{target:null})">Cancel</button>
+      <button class="m-save" onclick="addLead()">Add Lead</button>
+    </div>
+  </div>
+</div>
+
+<!-- TARGET EDIT MODAL -->
+<div class="modal-ov" id="tgt-modal" onclick="closeModalOv('tgt-modal',event)">
+  <div class="modal">
+    <div class="modal-title" id="tgt-modal-title">Update Target</div>
+    <div class="mf"><label id="tgt-modal-lbl">Amount</label><input type="number" id="tgt-modal-val"></div>
+    <div class="modal-btns">
+      <button class="m-cancel" onclick="closeModalOv('tgt-modal',{target:null})">Cancel</button>
+      <button class="m-save" onclick="saveTgtVal()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const BROKERS = ['Nathan','Angelo','Craig','Joshua','Cameron','Mohammed'];
+const TARGETS_DEF = [
+  {key:'oxbow',    label:'Oxbow',      target:100000,  format:'R', color:'#3b82f6'},
+  {key:'shortterm',label:'Short Term', target:1500000, format:'R', color:'#c9a84c'},
+  {key:'bank',     label:'Bank',       target:2000000, format:'R', color:'#8b5cf6'},
+  {key:'diesel',   label:'Diesel',     target:70000,   format:'L', color:'#10b981'},
+  {key:'insurance',label:'Insurance',  target:20000,   format:'R', color:'#ef4444'},
+];
+
+let activeBroker = 'All';
+let activeTab = 'dialler';
+let diallerFilter = null;
+let trackerFilter = null;
+let tgtEditState = null;
+
+const LS_LEADS   = 'vlc_leads_v3';
+const LS_TARGETS = 'vlc_targets_v3';
+const LS_SCRIPT  = 'vlc_script_url';
+
+function getLeads()   { try { const s=localStorage.getItem(LS_LEADS);   return s?JSON.parse(s):[]; } catch(e){return[];} }
+function saveLeads(l) { try { localStorage.setItem(LS_LEADS,JSON.stringify(l)); } catch(e){} }
+function getTargets() {
+  try { const s=localStorage.getItem(LS_TARGETS); if(s) return JSON.parse(s); } catch(e){}
+  const t={}; BROKERS.forEach(b=>{t[b]={};TARGETS_DEF.forEach(tg=>{t[b][tg.key]=0;})}); return t;
+}
+function saveTargets(t){ try{localStorage.setItem(LS_TARGETS,JSON.stringify(t));}catch(e){} }
+function getScriptUrl(){ try{ return localStorage.getItem(LS_SCRIPT)||''; }catch(e){return '';} }
+function setScriptUrl(u){ try{ localStorage.setItem(LS_SCRIPT,u); }catch(e){} }
+
+function toast(msg,color){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.style.background=color||'#10b981';
+  el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2500);
+}
+
+function updateConnBar(){
+  const url = getScriptUrl();
+  const bar = document.getElementById('conn-bar');
+  const txt = document.getElementById('conn-text');
+  if(url){
+    bar.className='conn-bar connected';
+    txt.textContent='Connected to sheet — updates sync automatically';
+  } else {
+    bar.className='conn-bar disconnected';
+    txt.textContent='Not connected to sheet — tap Setup Sync to enable auto-update';
+  }
+}
+
+// ── SETUP SYNC ──────────────────────────────────────────────
+function openSetupModal(){
+  document.getElementById('script-url').value = getScriptUrl();
+  document.getElementById('setup-modal').classList.add('open');
+}
+function saveScriptUrl(){
+  const url = document.getElementById('script-url').value.trim();
+  if(!url || !url.includes('script.google.com')){
+    toast('Please enter a valid Apps Script URL','#ef4444');
+    return;
+  }
+  setScriptUrl(url);
+  document.getElementById('setup-modal').classList.remove('open');
+  updateConnBar();
+  toast('✓ Connected to sheet');
+}
+
+// ── PULL FROM SCRIPT (GET) ──────────────────────────────────
+async function pullFromScript(){
+  const url = getScriptUrl();
+  if(!url){ toast('Connect to sheet first via Setup Sync','#f97316'); return; }
+  toast('Pulling leads...');
+  try {
+    const res = await fetch(url + '?action=getData');
+    const data = await res.json();
+    if(!data.success){ toast('Pull failed: '+(data.error||'unknown'),'#ef4444'); return; }
+
+    const existing = getLeads();
+    const existMap = {};
+    existing.forEach(l=>{ if(l.bizKey) existMap[l.bizKey]=l; });
+
+    const leads = data.leads.map(row=>{
+      const bizKey = (row.biz+row.contact).toLowerCase().replace(/\s/g,'');
+      const ex = existMap[bizKey];
+      return {
+        id: ex?ex.id:Date.now()+Math.random(),
+        bizKey, sheetRow:row.sheetRow,
+        num:row.num, biz:row.biz, contact:row.contact, phone:row.phone,
+        notes:row.notes, email:row.email, industry:row.industry,
+        fundType:row.fundType, amount:row.amount, broker:row.broker,
+        callDate:row.callDate, callStatus:row.callStatus,
+        leadStatus:row.leadStatus, followUp:row.followUp,
+        mandate:'No', mandateSigned:'No', appSubmitted:'No', termSheet:'No', dealClosed:'No',
+        loanAmount:'', feeEarned:'', city:'',
+        diallerNotes: ex?(ex.diallerNotes||''):''
+      };
+    });
+    saveLeads(leads);
+    closeImportModal();
+    renderAll();
+    toast(`✓ ${leads.length} leads pulled from sheet`);
+  } catch(err){
+    toast('Connection failed — check the URL','#ef4444');
+  }
+}
+
+// ── PUSH UPDATE TO SCRIPT (POST) ────────────────────────────
+async function pushUpdate(lead){
+  const url = getScriptUrl();
+  if(!url) return; // not connected, skip silently
+  try {
+    await fetch(url, {
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify({
+        action:'updateLead',
+        bizName: lead.biz,
+        contactName: lead.contact,
+        callStatus: lead.callStatus,
+        notes: lead.diallerNotes
+      })
+    });
+    showSyncPill(lead.id, true);
+  } catch(err){
+    showSyncPill(lead.id, false);
+  }
+}
+
+function showSyncPill(id, ok){
+  const el = document.getElementById('sp-'+id);
+  if(!el) return;
+  el.textContent = ok ? '✓ Synced' : '✗ Sync failed';
+  el.className = 'sync-pill' + (ok?' ok':'');
+  el.style.display = 'inline-block';
+  if(ok) setTimeout(()=>{ if(el) el.style.display='none'; }, 3000);
+}
+
+// ── PASTE IMPORT (fallback) ─────────────────────────────────
+function openImportModal(){ document.getElementById('import-modal').classList.add('open'); }
+function closeImportModal(){ document.getElementById('import-modal').classList.remove('open'); document.getElementById('import-data').value=''; }
+
+function importData(){
+  const raw = document.getElementById('import-data').value.trim();
+  if(!raw){ toast('Please paste data first','#ef4444'); return; }
+  const lines = raw.split('\n').filter(l=>l.trim());
+  const existing = getLeads();
+  const existMap = {};
+  existing.forEach(l=>{ if(l.bizKey) existMap[l.bizKey]=l; });
+
+  const newLeads = [];
+  let imported = 0;
+  lines.forEach((line,idx)=>{
+    const cols = line.split('\t');
+    if(cols.length < 4) return;
+    const biz=(cols[1]||'').trim();
+    const contact=(cols[2]||'').trim();
+    const phone=(cols[3]||'').trim();
+    if(!biz||!phone||isNaN(parseFloat(phone.replace(/[^0-9]/g,'')))) return;
+    if(biz.toLowerCase()==='business name') return;
+
+    const bizKey=(biz+contact).toLowerCase().replace(/\s/g,'');
+    const ex=existMap[bizKey];
+    newLeads.push({
+      id: ex?ex.id:Date.now()+idx+Math.random(), bizKey,
+      num:(cols[0]||'').trim(), biz, contact, phone,
+      notes:(cols[4]||'').trim(), email:(cols[5]||'').trim(),
+      industry:(cols[6]||'').trim(), fundType:(cols[7]||'').trim(),
+      amount:(cols[8]||'').trim(), broker:(cols[9]||'').trim(),
+      callDate:(cols[10]||'').trim(),
+      callStatus: ex?(ex.callStatus||(cols[11]||'').trim()):(cols[11]||'').trim(),
+      leadStatus:(cols[12]||'').trim(), followUp:(cols[13]||'').trim(),
+      mandate:(cols[14]||'').trim(), mandateSigned:(cols[15]||'').trim(),
+      appSubmitted:(cols[16]||'').trim(), termSheet:(cols[17]||'').trim(),
+      dealClosed:(cols[18]||'').trim(), loanAmount:(cols[19]||'').trim(),
+      city:(cols[22]||'').trim(),
+      diallerNotes: ex?(ex.diallerNotes||''):'',
+    });
+    imported++;
+  });
+  if(!imported){ toast('No valid leads found','#f97316'); return; }
+  saveLeads(newLeads);
+  closeImportModal();
+  renderAll();
+  toast(`✓ ${imported} leads imported`);
+}
+
+// ── TABS & BROKER ────────────────────────────────────────────
+function switchTab(tab,btn){
+  activeTab=tab;
+  ['dialler','tracker','targets'].forEach(t=>document.getElementById('tab-'+t).style.display=t===tab?'block':'none');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAll();
+}
+function setBroker(broker,btn){
+  activeBroker=broker;
+  document.querySelectorAll('.b-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAll();
+}
+function toggleFilter(f){
+  diallerFilter=diallerFilter===f?null:f;
+  document.getElementById('f-uncalled').classList.toggle('active',diallerFilter==='uncalled');
+  document.getElementById('f-hot').classList.toggle('active',diallerFilter==='hot');
+  renderDialler();
+}
+function toggleTFilter(f){
+  trackerFilter=trackerFilter===f?null:f;
+  document.getElementById('f-inprog').classList.toggle('active',trackerFilter==='inprogress');
+  document.getElementById('f-closed').classList.toggle('active',trackerFilter==='closed');
+  renderTracker();
+}
+function brokerMatch(l){
+  if(activeBroker==='All') return true;
+  return (l.broker||'').trim().toLowerCase()===activeBroker.toLowerCase();
+}
+
+// ── CALL POPUP ───────────────────────────────────────────────
+let openPopupId = null;
+function togglePopup(id){
+  if(openPopupId && openPopupId!==id){
+    const prev=document.getElementById('pop-'+openPopupId);
+    if(prev) prev.classList.remove('open');
+  }
+  const pop=document.getElementById('pop-'+id);
+  if(!pop) return;
+  const wasOpen=pop.classList.contains('open');
+  pop.classList.toggle('open',!wasOpen);
+  openPopupId=wasOpen?null:id;
+}
+function copyNum(id,num){
+  const clean=num.replace(/\s/g,'');
+  const doCopy=()=>{
+    const btn=document.getElementById('cpbtn-'+id);
+    if(btn){btn.textContent='✓ Copied!';btn.classList.add('copied');setTimeout(()=>{btn.textContent='Copy Number';btn.classList.remove('copied');},2000);}
+    toast('Number copied');
+  };
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(clean).then(doCopy).catch(()=>{
+      const ta=document.createElement('textarea');ta.value=clean;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);doCopy();
+    });
+  } else {
+    const ta=document.createElement('textarea');ta.value=clean;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);doCopy();
+  }
+}
+
+// ── RENDER DIALLER ───────────────────────────────────────────
+function renderDialler(){
+  const leads=getLeads();
+  const all=leads.filter(brokerMatch);
+  const q=(document.getElementById('d-search').value||'').toLowerCase();
+  let filtered=all.filter(l=>{
+    if(q&&!l.biz.toLowerCase().includes(q)&&!(l.contact||'').toLowerCase().includes(q)&&!(l.phone||'').includes(q)) return false;
+    if(diallerFilter==='uncalled') return !l.callStatus||l.callStatus==='';
+    if(diallerFilter==='hot') return l.callStatus==='Interested';
+    return true;
+  });
+
+  document.getElementById('s-total').textContent=all.length;
+  document.getElementById('s-left').textContent=all.filter(l=>!l.callStatus||l.callStatus==='').length;
+  document.getElementById('s-ans').textContent=all.filter(l=>l.callStatus&&l.callStatus!=='').length;
+  document.getElementById('s-int').textContent=all.filter(l=>l.callStatus==='Interested').length;
+  document.getElementById('s-vm').textContent=all.filter(l=>l.callStatus==='Voicemail').length;
+
+  const c=document.getElementById('dialler-list');
+  if(!filtered.length){c.innerHTML='<div class="empty">No leads found.<br>Tap <b>Setup Sync</b> to connect your sheet,<br>then <b>Import</b> to pull leads.</div>';return;}
+
+  const uncalled =filtered.filter(l=>!l.callStatus||l.callStatus==='');
+  const hot      =filtered.filter(l=>l.callStatus==='Interested');
+  const rest     =filtered.filter(l=>l.callStatus&&l.callStatus!==''&&l.callStatus!=='Interested');
+
+  let html='';
+  if(uncalled.length){html+=`<div class="sec-lbl">To Call (${uncalled.length})</div>`;uncalled.forEach(l=>html+=dCard(l));}
+  if(hot.length)     {html+=`<div class="sec-lbl">Hot Leads (${hot.length})</div>`;hot.forEach(l=>html+=dCard(l));}
+  if(rest.length&&!diallerFilter){html+=`<div class="sec-lbl">Called (${rest.length})</div>`;rest.forEach(l=>html+=dCard(l));}
+  c.innerHTML=html;
+}
+
+function dCard(l){
+  const id=l.id;
+  const sc=(l.callStatus||'').toLowerCase().replace(/ /g,'-');
+  const sts=[
+    {k:'Answered',c:'ob-ans'},{k:'Voicemail',c:'ob-vm'},
+    {k:'No Answer',c:'ob-na'},{k:'Interested',c:'ob-int'},
+    {k:'Declined',c:'ob-dec'},{k:'Wrong Number',c:'ob-wn'}
+  ];
+  const btns=sts.map(s=>`<button class="ob ${s.c} ${l.callStatus===s.k?'sel':''}" onclick="setStatus('${id}','${s.k}')">${s.k}</button>`).join('');
+  const statTag=!l.callStatus||l.callStatus===''?`<span class="tag tg-new">New</span>`:l.callStatus==='Interested'?`<span class="tag tg-hot">Hot</span>`:`<span class="tag tg-prog">${l.callStatus}</span>`;
+  const amtTag=l.amount?`<span class="tag tg-amt">R ${Number((l.amount+'').replace(/[^0-9.]/g,'')||0).toLocaleString('en-ZA')}</span>`:'';
+  const indTag=l.industry?`<span class="tag tg-ind">${l.industry}</span>`:'';
+  const fundTag=l.fundType?`<span class="tag tg-fund">${l.fundType}</span>`:'';
+  const phone=l.phone||'No number';
+
+  return `
+  <div class="card ${sc}" id="dcard-${id}">
+    <div class="card-top">
+      <div class="card-info">
+        <div class="card-name">${l.biz||l.contact||'Unknown'} <span class="sync-pill" id="sp-${id}" style="display:none;"></span></div>
+        <div class="card-sub">${l.contact||''}${l.city?' · '+l.city:''}</div>
+        <div class="card-tags">${statTag}${indTag}${amtTag}${fundTag}</div>
+      </div>
+      <button class="call-btn" onclick="togglePopup('${id}')">📞 Call</button>
+    </div>
+    <div class="call-popup" id="pop-${id}">
+      <div class="cp-label">Contact Number</div>
+      <div class="cp-number">${phone}</div>
+      <div class="cp-btns">
+        <a class="cp-dial" href="tel:${phone.replace(/\s/g,'')}">📞 Dial Now</a>
+        <button class="cp-copy" id="cpbtn-${id}" onclick="copyNum('${id}','${phone}')">Copy Number</button>
+        <button class="cp-close" onclick="togglePopup('${id}')">✕</button>
+      </div>
+    </div>
+    <div class="out-bar">${btns}</div>
+    <div class="notes-row">
+      <textarea class="notes-in" rows="1" placeholder="Call notes..." onblur="saveNote('${id}',this.value)">${l.diallerNotes||''}</textarea>
+    </div>
+  </div>`;
+}
+
+function setStatus(id,status){
+  const leads=getLeads();
+  const lead=leads.find(l=>String(l.id)===String(id));
+  if(!lead) return;
+  lead.callStatus=lead.callStatus===status?'':status;
+  saveLeads(leads);
+  renderDialler();
+  toast(lead.callStatus?`Marked: ${lead.callStatus}`:'Status cleared');
+  pushUpdate(lead);
+}
+
+function saveNote(id,note){
+  const leads=getLeads();
+  const lead=leads.find(l=>String(l.id)===String(id));
+  if(lead){
+    lead.diallerNotes=note;
+    saveLeads(leads);
+    if(note) pushUpdate(lead);
+  }
+}
+
+function nextCall(){
+  const leads=getLeads();
+  const uncalled=leads.filter(l=>brokerMatch(l)&&(!l.callStatus||l.callStatus===''));
+  if(!uncalled.length){toast('No uncalled leads remaining','#f97316');return;}
+  const lead=uncalled[0];
+  const card=document.getElementById('dcard-'+lead.id);
+  if(card) card.scrollIntoView({behavior:'smooth',block:'center'});
+  setTimeout(()=>togglePopup(lead.id),500);
+}
+
+// ── RENDER TRACKER ───────────────────────────────────────────
+function renderTracker(){
+  const leads=getLeads();
+  const q=(document.getElementById('t-search').value||'').toLowerCase();
+  let filtered=leads.filter(l=>{
+    if(!brokerMatch(l)) return false;
+    if(q&&!l.biz.toLowerCase().includes(q)&&!(l.contact||'').toLowerCase().includes(q)&&!(l.phone||'').includes(q)) return false;
+    if(trackerFilter==='inprogress') return l.leadStatus==='In Progress'||l.leadStatus==='Contacted'||l.mandate==='Yes';
+    if(trackerFilter==='closed') return l.dealClosed==='Yes';
+    return true;
+  });
+  const c=document.getElementById('tracker-list');
+  if(!filtered.length){c.innerHTML='<div class="empty">No leads. Import your sheet or add leads manually.</div>';return;}
+
+  let html='';
+  filtered.forEach(l=>{
+    const pipeline=[
+      {lbl:'Mandate', ok:l.mandate&&l.mandate!=='No'&&l.mandate!==''},
+      {lbl:'Signed',  ok:l.mandateSigned==='Yes'},
+      {lbl:'App',     ok:l.appSubmitted==='Yes'},
+      {lbl:'Sheet',   ok:l.termSheet==='Yes'},
+      {lbl:'Closed',  ok:l.dealClosed==='Yes'},
+    ];
+    const ph=pipeline.map(p=>`<div class="pipe-item"><div class="pipe-dot" style="background:${p.ok?'#10b981':'#2a2a4e'}"></div><span style="font-size:.6rem;color:${p.ok?'#10b981':'#a0a0b8'}">${p.lbl}</span></div>`).join('');
+    const bc=l.dealClosed==='Yes'?'#10b981':l.leadStatus==='Contacted'||l.leadStatus==='In Progress'?'#c9a84c':l.leadStatus==='Declined'?'#ef4444':'#2a2a4e';
+    const tid='t'+l.id;
+    const phone=l.phone||'No number';
+    html+=`
+    <div class="card" style="border-left:4px solid ${bc}">
+      <div class="card-top">
+        <div class="card-info">
+          <div class="card-name">${l.biz}</div>
+          <div class="card-sub">${l.contact||''} · ${phone}</div>
+          <div class="card-tags">
+            ${l.broker?`<span class="tag tg-prog">${l.broker}</span>`:''}
+            ${l.industry?`<span class="tag tg-ind">${l.industry}</span>`:''}
+            ${l.fundType?`<span class="tag tg-fund">${l.fundType}</span>`:''}
+            ${l.amount?`<span class="tag tg-amt">R ${l.amount}</span>`:''}
+          </div>
+        </div>
+        <button class="call-btn" onclick="togglePopup('${tid}')" style="background:#3b82f6">📞</button>
+      </div>
+      <div class="call-popup" id="pop-${tid}">
+        <div class="cp-label">Contact Number</div>
+        <div class="cp-number">${phone}</div>
+        <div class="cp-btns">
+          <a class="cp-dial" href="tel:${phone.replace(/\s/g,'')}">📞 Dial</a>
+          <button class="cp-copy" id="cpbtn-${tid}" onclick="copyNum('${tid}','${phone}')">Copy</button>
+          <button class="cp-close" onclick="togglePopup('${tid}')">✕</button>
+        </div>
+      </div>
+      <div class="pipe-row">${ph}</div>
+      ${l.notes||l.city?`<div class="notes-row"><div style="font-size:.72rem;color:#6b7280;padding:0 0 8px">${l.notes||''} ${l.city?'· '+l.city:''}</div></div>`:''}
+    </div>`;
+  });
+  c.innerHTML=html;
+}
+
+// ── RENDER TARGETS ───────────────────────────────────────────
+function renderTargets(){
+  const tgts=getTargets();
+  const brokers=activeBroker==='All'?BROKERS:[activeBroker];
+  let html='';
+  brokers.forEach(broker=>{
+    const scores=TARGETS_DEF.map(t=>Math.min(100,Math.round(((tgts[broker]||{})[t.key]||0)/t.target*100)));
+    const avg=Math.round(scores.reduce((a,b)=>a+b,0)/scores.length);
+    const emoji=avg>=100?'🏆':avg>=70?'💪':avg>=40?'⚡':'🔥';
+    let rows=TARGETS_DEF.map((t,i)=>{
+      const val=(tgts[broker]||{})[t.key]||0;
+      const p=scores[i];
+      const bc=p>=100?'#10b981':p>=70?'#c9a84c':p>=40?'#f97316':'#ef4444';
+      const vf=t.format==='R'?`R ${Number(val).toLocaleString('en-ZA')}`:`${Number(val).toLocaleString('en-ZA')}L`;
+      const tf=t.format==='R'?`R ${t.target.toLocaleString('en-ZA')}`:`${t.target.toLocaleString('en-ZA')}L`;
+      return `<div class="tgt-row">
+        <div class="tgt-lbl">${t.label}</div>
+        <div style="flex:1;min-width:0">
+          <div class="tgt-bar-wrap"><div class="tgt-bar" style="width:${p}%;background:${bc}"></div></div>
+          <div style="font-size:.6rem;color:#a0a0b8;margin-top:2px">${vf} of ${tf}</div>
+        </div>
+        <div class="tgt-pct" style="color:${bc}">${p}%</div>
+        <button class="tgt-edit" onclick="openTgtEdit('${broker}','${t.key}','${t.label}',${val})">Edit</button>
+      </div>`;
+    }).join('');
+    html+=`<div class="tgt-card"><div class="tgt-header"><div class="tgt-broker">${emoji} ${broker}</div><div class="tgt-score">${avg}%</div></div>${rows}</div>`;
+  });
+  document.getElementById('targets-wrap').innerHTML=html;
+}
+
+function openTgtEdit(broker,key,label,current){
+  tgtEditState={broker,key};
+  document.getElementById('tgt-modal-title').textContent=`${broker} — ${label}`;
+  document.getElementById('tgt-modal-lbl').textContent=label;
+  document.getElementById('tgt-modal-val').value=current||0;
+  document.getElementById('tgt-modal').classList.add('open');
+}
+function saveTgtVal(){
+  if(!tgtEditState) return;
+  const val=parseFloat(document.getElementById('tgt-modal-val').value)||0;
+  const t=getTargets();
+  if(!t[tgtEditState.broker]) t[tgtEditState.broker]={};
+  t[tgtEditState.broker][tgtEditState.key]=val;
+  saveTargets(t);
+  document.getElementById('tgt-modal').classList.remove('open');
+  tgtEditState=null;
+  renderTargets();
+  toast('Target updated');
+}
+
+// ── ADD LEAD ─────────────────────────────────────────────────
+function openAddModal(){ document.getElementById('add-modal').classList.add('open'); document.getElementById('n-biz').focus(); }
+function addLead(){
+  const biz=document.getElementById('n-biz').value.trim();
+  const phone=document.getElementById('n-phone').value.trim();
+  if(!biz||!phone){toast('Business name and phone required','#ef4444');return;}
+  const leads=getLeads();
+  const id=Date.now();
+  leads.unshift({
+    id,bizKey:(biz+(document.getElementById('n-name').value||'')).toLowerCase().replace(/\s/g,''),
+    biz,contact:document.getElementById('n-name').value.trim(),
+    phone,industry:document.getElementById('n-ind').value,
+    fundType:document.getElementById('n-fund').value,
+    amount:document.getElementById('n-amt').value||'',
+    broker:document.getElementById('n-broker').value,
+    notes:document.getElementById('n-notes').value.trim(),
+    callStatus:'',leadStatus:'New',mandate:'No',
+    mandateSigned:'No',appSubmitted:'No',termSheet:'No',
+    dealClosed:'No',loanAmount:'',feeEarned:'',city:'',diallerNotes:''
+  });
+  saveLeads(leads);
+  ['n-biz','n-name','n-phone','n-amt','n-notes'].forEach(x=>document.getElementById(x).value='');
+  document.getElementById('n-ind').value='';document.getElementById('n-fund').value='';
+  document.getElementById('add-modal').classList.remove('open');
+  renderAll(); toast('Lead added');
+}
+
+function closeModalOv(id,e){
+  const el=document.getElementById(id);
+  if(!e||!e.target||e.target===el) el.classList.remove('open');
+}
+
+function renderAll(){
+  if(activeTab==='dialler') renderDialler();
+  if(activeTab==='tracker') renderTracker();
+  if(activeTab==='targets') renderTargets();
+}
+
+updateConnBar();
+renderAll();
+</script>
+</body>
+</html>
